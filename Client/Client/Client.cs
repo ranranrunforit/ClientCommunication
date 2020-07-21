@@ -48,7 +48,7 @@ namespace Client
                 Result.Append(HexAlphabet[(int)(Bytes[i] & 0xF)]);
                 Result.Append(' ');
             }
-
+            Console.WriteLine("ByteArrayToHexString result ： " + Result.ToString());
             return Result.ToString();
             //below works too, just keep it here for now
             //return BitConverter.ToString(Bytes).Replace("-", " ");
@@ -57,6 +57,7 @@ namespace Client
         }
 
         //convert string to HEX Byte Array
+        //use it when sending the message
         public static byte[] StringToByteArray(String Hex)
         {
             byte[] bytes = new byte[Hex.Length / 2];
@@ -64,6 +65,8 @@ namespace Client
                 bytes[i / 2] = Convert.ToByte(Hex.Substring(i, 2), 16);
             return bytes;
         }
+
+        //write out string in the show box
         private void LogWriteS(string msg = null)
         {
             if (!exit)
@@ -160,11 +163,12 @@ namespace Client
                     {
                         //actually start to reading and keep reading incase these still left
                         obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), obj);
-                        Console.WriteLine("Read BeginRead obj.buffer ： " + Encoding.UTF8.GetString(obj.buffer, 0, bytes));
+                        Console.WriteLine("Read BeginRead obj.buffer ： " + Encoding.UTF8.GetString(obj.buffer,0, bytes));
                     }
                     else
                     {
                         //write down what you recieved from server
+                        ServerDisplay(ByteArrayToHexString(obj.buffer, bytes));
                         LogWriteS(ByteArrayToHexString(obj.buffer,bytes));
                         Console.WriteLine("Read logWrite obj.buffer ： " + Encoding.UTF8.GetString(obj.buffer, 0, bytes));
                         //Console.WriteLine("Read logWrite bytes ： " + bytes.ToString());
@@ -348,5 +352,70 @@ namespace Client
         {
             LogWrite();
         }
+
+        private void btnSubmit_Click(object sender, EventArgs e)
+        {
+            String step = StepText.Text;
+            String length = LengthText.Text;
+            String test = TestingText.Text;
+            String sampNum = SampleNumText.Text;
+            String totalNum = TotalNumText.Text;
+            String testNum = TestNumText.Text;
+            String data = DataText.Text;
+            String addi = AddComText.Text;
+            MessageBox.Show(step +" " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data);
+            string msg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data;
+            Console.WriteLine("SendTextbox msg ： ", msg);
+            sendTextBox.Clear();
+            LogWrite(Encoding.UTF8.GetBytes("[** 你 --> 服务器 **]：" + msg));
+            if (connected)
+            {
+                //StringToByteArray
+                //Encoding.UTF8.GetBytes
+                TaskSend(StringToByteArray(msg));
+            }
+        }
+
+        //write out string in the show box
+        private void ServerDisplay(string msg = null)
+        {
+            if (!exit)
+            {
+                SBox1.Invoke((MethodInvoker)delegate
+                {
+                    
+                    if (msg != null)
+                    {
+                        string[] msgSplit = msg.Split(' ');
+                        Label[] labels = { Slabel11, Slabel12, Slabel13, Slabel14, Slabel15, Slabel16, Slabel17, Slabel18 };
+                        for (int i = 0; i < labels.Length; i += 1)
+                        {
+                            
+                            if (i == 3 )
+                            {
+                                labels[3].Text = msgSplit[3] + " "+ msgSplit[4];
+                                labels[3].Refresh();
+                            }
+                            else if (i>=4)
+                            {
+                                labels[i].Text = msgSplit[i+1];
+                                labels[i].Refresh();
+                            }
+                            else 
+                            {
+                                labels[i].Text = msgSplit[i];
+                                labels[i].Refresh();
+                            }
+                                
+                         
+                        }
+
+                    }
+                    
+                });
+            }
+        }
+
+
     }
 }
