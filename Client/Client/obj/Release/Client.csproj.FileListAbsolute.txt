@@ -126,4 +126,4 @@ C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\bin\Release\Client
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\bin\Release\Client.dll
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.dll
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.csprojAssemblyReference.cache
-C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.ConnectedEventArgs.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.Logger.resources

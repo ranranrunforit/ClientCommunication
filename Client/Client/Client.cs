@@ -13,9 +13,81 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Timers;
+using System.IO;
+using System.Web.Hosting;
+using System.Reflection;
 
 namespace Client
 {
+    /*
+     A simpler version of the Logger class which does the thing, in completely Threadsafe way.
+    One main thing to notice here is, no TextWriter.Synchronized is required for thread safety, 
+    as we are writing the file within a proper lock.
+    */
+    public static class Logger
+    {
+        static readonly object _locker = new object();
+
+        public static void Log(string logMessage)
+        {
+            try
+            {
+                /*
+                var logFilePath = Path.Combine(@"C:\Users\zhouc\Desktop\", "Log-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                WriteToLog(logMessage, logFilePath);
+                */
+                //Use this for daily log files : "Log" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+                //yourapp_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                //for example，in my testing app is 
+                //C:\Users\zhouc\Desktop\C#\chatchat\TestingDLL\WindowsFormsApp1\bin\Debug\Logs\Log_2020-07-07.txt
+
+                string FilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Logs\");
+                if (!Directory.Exists(FilePath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(FilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                    }
+                }
+                string logFile = "Log_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+                string logFilePath = Path.Combine(FilePath, logFile);
+                WriteToLog(logMessage, logFilePath);
+                
+            }
+            catch (Exception ex)
+            {
+                //log log-exception somewhere else if required!
+                Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+            }
+        }
+
+        static void WriteToLog(string logMessage, string logFilePath)
+        {
+            lock (_locker)
+            {
+                
+                File.AppendAllText(logFilePath,
+                        string.Format("Logged on: {1} at: {2}{0}Message: {3}{0}--------------------{0}",
+                        Environment.NewLine, DateTime.Now.ToLongDateString(),
+                        DateTime.Now.ToLongTimeString(), logMessage));
+                /*
+                StreamWriter sw;
+                sw = File.AppendText(logFilePath);
+                sw.WriteLine(string.Format("Logged on: {1} at: {2}{0}Message: {3}{0}--------------------{0}",
+                        Environment.NewLine, DateTime.Now.ToLongDateString(),
+                        DateTime.Now.ToLongTimeString(), logMessage));
+                sw.Close();
+
+                sw.Dispose();
+                */
+            }
+        }
+    }
+
     //handle when connected to Server
     public class ConnectedEventArgs : EventArgs
     {
@@ -54,11 +126,12 @@ namespace Client
         private string order = "";//don't acces this variable: it's just for storing the value in it
         private string serverside = "";
         private string clientside = "";
-
+        /* below is for timer && stopwatch*/
         private readonly Stopwatch stopwatch = new Stopwatch();
         private TimeSpan ts;
         private static System.Timers.Timer aTimer;
-        //private string temp = "";
+
+
         // A read-write instance property:
         public string DataAvg
         {
@@ -77,10 +150,9 @@ namespace Client
             set => _quali = value;
         }
 
-
-        //private string variable = "";
         //replyOrder property contains Ready.
         //reply Order when it's ready.
+        //once replied the server side，start a timer and a stopwatch
         public bool replyOrder //this variable should be used by all your code
         {
             get { return Ready; }
@@ -94,7 +166,7 @@ namespace Client
                     stopwatch.Reset();
                     stopwatch.Start();
                     ts = stopwatch.Elapsed;
-                    //temp = order;
+
                     // Create a timer and set a five second interval.
                     aTimer = new System.Timers.Timer();
                     aTimer.Interval = 120000;
@@ -103,7 +175,7 @@ namespace Client
                     aTimer.Elapsed += OnTimedEvent;
 
                     // Have the timer fire repeated events (true is the default)
-                    //set it to false if you want it don't fire events after first 2 minutes
+                    //**set it to false if you don't want it fire events after first 2 minutes**
                     aTimer.AutoReset = false;
 
                     // Start the timer
@@ -113,24 +185,14 @@ namespace Client
             }
         }
 
+        // the Elapsed event for the timer.
         public void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             //Console.WriteLine("REACHED THE 30 SECONDS AT {0}", e.SignalTime);
-            //Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
             Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
             Console.WriteLine("斑点激发错误，需要重新加工。");
-            /*
-            if (temp != order)
-            {
-                Console.WriteLine("THE DATA HAS BEEN CHANGED CANCELING OUT THE EVENT");
-                aTimer.Stop();
-                aTimer.Dispose();
-            }
-            else 
-            {
-                Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
-            }
-            */
+            Logger.Log( e.SignalTime + "  已经2分钟未收到回复。");
+            Logger.Log("斑点激发错误，需要重新加工。");
         }
 
         //handle when Client side order changed
@@ -364,25 +426,6 @@ namespace Client
             return value;
         }
         
-        //return message
-        private string WriteMsg(string msg = null)
-        {
-            if (!exit)
-            {
-                
-                if (msg == null)
-                {
-                    return "信息为空";
-                }
-                else
-                {
-                    return DateTime.Now.ToString("HH:mm") + " " + msg;
-                }
-                
-            }
-            return "已断开，无信息";
-        }
-
         /*Read data from server
          when server send data to client:
          Read function will process the data   */
@@ -416,9 +459,13 @@ namespace Client
                     {
                         //write down what you recieved from server
                         Console.WriteLine("[** 服务器 --> 客户端(你) **]：" + ByteArrayToHexString(obj.buffer, bytes));
+                        Logger.Log("[** 服务器 --> 客户端(你) **]：" + ByteArrayToHexString(obj.buffer, bytes));
+
                         order = ByteArrayToHexString(obj.buffer, bytes);
+
                         Console.WriteLine("[** 服务器 --> 客户端(你) **] GetOrder(order)：" + GetOrder(order));
                         
+
                         //GetOrder(ByteArrayToHexString(obj.buffer, bytes)
                         //Reply(ByteArrayToHexString(obj.buffer, bytes));
                         //Console.WriteLine("Read logWrite obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
@@ -454,8 +501,9 @@ namespace Client
                 ConnectedEventArgs args = new ConnectedEventArgs();
                 args.Connect = connected;
                 OnConnected(args);
-                clientside = "[** 客户端(你)已连接 **]";
-                Console.WriteLine("[** 客户端(你)已连接 **]");
+                clientside = "[** 客户端(你) 已连接 **]";
+                Console.WriteLine("[** 客户端(你) 已连接 **]");
+                Logger.Log(clientside);
                 while (obj.client.Connected)
                 {
                     try
@@ -471,10 +519,18 @@ namespace Client
                         Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                     }
                 }
-                obj.client.Close();
+
                 connected = false;
-                clientside = "[** 客户端(你)已断开 **]";
-                Console.WriteLine("[** 客户端(你)已断开 **]");
+                exit = true;
+                obj.client.Close();
+                
+                ConnectedEventArgs argsc = new ConnectedEventArgs();
+                argsc.Connect = connected;
+                OnConnected(argsc);
+                
+                clientside = "[** 客户端(你) 已断开 **]";
+                Logger.Log(clientside);
+                Console.WriteLine("[** 客户端(你) 已断开 **]");
             }
             catch (Exception ex)
             {
@@ -482,11 +538,14 @@ namespace Client
             }
         }
 
+
         /*ConnectButton_Click event*/
         public void Connect_Click(String ipaddr, String iport)
         {
             if (connected)
             {
+                connected = false;
+                exit = true;
                 obj.client.Close();
             }
             else if (Tclient == null || !Tclient.IsAlive)
@@ -494,16 +553,19 @@ namespace Client
                 bool localaddrResult = IPAddress.TryParse(ipaddr, out IPAddress localaddr);
                 if (!localaddrResult)
                 {
+                    Logger.Log("[ IP 地址无效，请重新填写  ]");
                     Console.WriteLine(("[ IP 地址无效，请重新填写  ]"));
                 }
                 bool portResult = int.TryParse(iport, out int port);
                 if (!portResult)
                 {
+                    Logger.Log("[  端口无效，请重新填写  ]");
                     Console.WriteLine(("[  端口无效，请重新填写  ]"));
                 }
                 else if (port < 0 || port > 65535)
                 {
                     portResult = false;
+                    Logger.Log("[  端口超过正常范围(0，65535)，请重新填写  ]");
                     Console.WriteLine(("[  端口超过正常范围(0，65535)，请重新填写  ]"));
                 }
                 if (localaddrResult && portResult)
@@ -571,9 +633,11 @@ namespace Client
         {
             if (connected)
             {
+                connected = false;
                 exit = true;
                 obj.client.Close();
             }
+            
         }
 
         //write out string in the show box
@@ -583,7 +647,7 @@ namespace Client
             {
                 if (msg != null)
                 {
-                    
+                    //used the stopwatch to stop the timer
                     if (stopwatch != null) 
                     {
                         stopwatch.Stop();
@@ -592,18 +656,12 @@ namespace Client
                         if (ts != TimeSpan.Zero)
                         {
                             Console.WriteLine("AFTER REPLY GET MESSAGE IN {0} SECONDS" , ts.ToString("mm\\:ss\\.ff"));
-                            //Console.WriteLine("THE DATA HAS BEEN CHANGED CANCELING OUT THE TWO MINUTES EVENT");
                             aTimer.Stop();
                             aTimer.Dispose();
                         }
 
                     }
 
-
-                    //_stopTime = DateTime.Now;
-                    //Console.WriteLine("DATE TIME NOW " + DateTime.UtcNow.ToString("mm\\:ss\\.ff"));
-                    //duration = DateTime.UtcNow - _startTime;
-                    //Console.WriteLine("AFTER REPLY GET MESSAGE " + _duration.ToString("mm\\:ss\\.ff"));
                     string[] msgSplit = msg.Split(' ');
                     string[] labels = { "", "", "", "", "", "", "", "" };
                     //Console.WriteLine("Replay msg length ： " + msgSplit.Length.ToString());
@@ -648,9 +706,11 @@ namespace Client
 
                     } //end of for loop
                     serverside = string.Join(" ", labels);
+                    Logger.Log("[** 服务器 --> 客户端(你) **]serverside：" + serverside);
                     ServersideEventArgs args = new ServersideEventArgs();
                     args.Serverside = serverside;
                     OnServersideChanged(args);
+                    
                     return serverside;
                 }//end of if (msg != null)
                 else
@@ -702,6 +762,7 @@ namespace Client
                     TaskSend(StringToByteArray(clientmsg));
                     
                     Console.WriteLine("[** 客户端(你) --> 服务器 **]：" + clientmsg);
+                    Logger.Log("[** 客户端(你) --> 服务器 **]：" + clientmsg);
                     serverside = "";
                     ServersideEventArgs args = new ServersideEventArgs();
                     args.Serverside = serverside;
@@ -710,6 +771,7 @@ namespace Client
                     ClientsideEventArgs args1 = new ClientsideEventArgs();
                     args1.Clientside = clientside;
                     OnClientsideChanged(args1);
+                    Logger.Log("[** 客户端(你) --> 服务器 **]clientside：" + clientside);
                     return clientside;
                     /*
                     Clabel1.Text = GetMeaning(msgSplit[0]) + Environment.NewLine + "（HEX:" + msgSplit[0] + ")";
