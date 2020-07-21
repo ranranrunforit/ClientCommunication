@@ -55,6 +55,10 @@ namespace Client
         private string serverside = "";
         private string clientside = "";
 
+        private readonly Stopwatch stopwatch = new Stopwatch();
+        private TimeSpan ts;
+        private static System.Timers.Timer aTimer;
+        //private string temp = "";
         // A read-write instance property:
         public string DataAvg
         {
@@ -73,6 +77,7 @@ namespace Client
             set => _quali = value;
         }
 
+
         //private string variable = "";
         //replyOrder property contains Ready.
         //reply Order when it's ready.
@@ -86,8 +91,46 @@ namespace Client
                 {
                     Reply(order);
                     Ready = false;
+                    stopwatch.Reset();
+                    stopwatch.Start();
+                    ts = stopwatch.Elapsed;
+                    //temp = order;
+                    // Create a timer and set a five second interval.
+                    aTimer = new System.Timers.Timer();
+                    aTimer.Interval = 120000;
+
+                    // Hook up the Elapsed event for the timer. 
+                    aTimer.Elapsed += OnTimedEvent;
+
+                    // Have the timer fire repeated events (true is the default)
+                    //set it to false if you want it don't fire events after first 2 minutes
+                    aTimer.AutoReset = false;
+
+                    // Start the timer
+                    aTimer.Enabled = true;
+
                 }
             }
+        }
+
+        public void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            //Console.WriteLine("REACHED THE 30 SECONDS AT {0}", e.SignalTime);
+            //Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
+            Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
+            Console.WriteLine("斑点激发错误，需要重新加工。");
+            /*
+            if (temp != order)
+            {
+                Console.WriteLine("THE DATA HAS BEEN CHANGED CANCELING OUT THE EVENT");
+                aTimer.Stop();
+                aTimer.Dispose();
+            }
+            else 
+            {
+                Console.WriteLine("REACHED THE TWO MINUTES AT {0}", e.SignalTime);
+            }
+            */
         }
 
         //handle when Client side order changed
@@ -110,6 +153,7 @@ namespace Client
             if (handler != null)
             {
                 handler(this, e);
+                
             }
 
         }
@@ -321,7 +365,7 @@ namespace Client
         }
         
         //return message
-        private string ReturnMsg(string msg = null)
+        private string WriteMsg(string msg = null)
         {
             if (!exit)
             {
@@ -420,6 +464,7 @@ namespace Client
                         Console.WriteLine("Connection BeginRead obj.buffer ：" + ByteArrayToHexString(obj.buffer, obj.buffer.Length));
                         obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), null);
                         obj.handle.WaitOne();//for thread safe
+                        
                     }
                     catch (Exception ex)
                     {
@@ -538,6 +583,27 @@ namespace Client
             {
                 if (msg != null)
                 {
+                    
+                    if (stopwatch != null) 
+                    {
+                        stopwatch.Stop();
+                        ts = stopwatch.Elapsed;
+                        //TimeSpan ts = stopwatch.Elapsed;
+                        if (ts != TimeSpan.Zero)
+                        {
+                            Console.WriteLine("AFTER REPLY GET MESSAGE IN {0} SECONDS" , ts.ToString("mm\\:ss\\.ff"));
+                            //Console.WriteLine("THE DATA HAS BEEN CHANGED CANCELING OUT THE TWO MINUTES EVENT");
+                            aTimer.Stop();
+                            aTimer.Dispose();
+                        }
+
+                    }
+
+
+                    //_stopTime = DateTime.Now;
+                    //Console.WriteLine("DATE TIME NOW " + DateTime.UtcNow.ToString("mm\\:ss\\.ff"));
+                    //duration = DateTime.UtcNow - _startTime;
+                    //Console.WriteLine("AFTER REPLY GET MESSAGE " + _duration.ToString("mm\\:ss\\.ff"));
                     string[] msgSplit = msg.Split(' ');
                     string[] labels = { "", "", "", "", "", "", "", "" };
                     //Console.WriteLine("Replay msg length ： " + msgSplit.Length.ToString());
