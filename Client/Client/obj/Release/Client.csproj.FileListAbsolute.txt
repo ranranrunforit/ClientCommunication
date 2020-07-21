@@ -57,3 +57,13 @@ C:\Users\zhouc\Desktop\C#\chatchat\Client - Layout\Client\obj\Release\Client.csp
 C:\Users\zhouc\Desktop\C#\chatchat\Client - Layout\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
 C:\Users\zhouc\Desktop\C#\chatchat\Client - Layout\Client\obj\Release\Client.exe
 C:\Users\zhouc\Desktop\C#\chatchat\Client - Layout\Client\obj\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\bin\Release\Client.exe.config
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\bin\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\bin\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.Client.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.csproj.GenerateResource.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.csprojAssemblyReference.cache

@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 
 namespace Client
 {
@@ -33,7 +36,7 @@ namespace Client
         public static string ByteArrayToHexString(byte[] Bytes, int length)
         {
             StringBuilder Result = new StringBuilder(length * 2);
-            string HexAlphabet = "0123456789ABCDEF";
+            string HexAlphabet = "0123456789abcdef";
             /*
              foreach (byte B in Bytes)
             {
@@ -41,7 +44,6 @@ namespace Client
                 Result.Append(HexAlphabet[(int)(B & 0xF)]);
             }
              */
-
             for (int i = 0; i < length; i += 1)
             {
                 Result.Append(HexAlphabet[(int)(Bytes[i] >> 4)]);
@@ -55,15 +57,55 @@ namespace Client
             
 
         }
-
+        
         //convert string to HEX Byte Array
         //use it when sending the message
         public static byte[] StringToByteArray(String Hex)
         {
-            byte[] bytes = new byte[Hex.Length / 2];
+            string[] hexValuesSplit = Hex.Split(' ');
+            byte[] bytes = new byte[hexValuesSplit.Length];
+            /*
             for (int i = 0; i < Hex.Length; i += 3)
                 bytes[i / 2] = Convert.ToByte(Hex.Substring(i, 2), 16);
+            */
+            for (int i = 0; i < hexValuesSplit.Length; i += 1)
+            {
+                bytes[i] = Convert.ToByte(hexValuesSplit[i], 16);
+            }
             return bytes;
+            //return Enumerable.Range(0, Hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(Hex.Substring(x, 2), 16)).ToArray();
+        }
+
+        //get meaning of Hex String
+        public static string GetMeaning(String Hex)
+        {
+            string value = "";
+            Dictionary<string, string> meaning = new Dictionary<string, string>()
+            {
+                { "01", "第1步" },{ "02", "第2步" },{ "03", "第3步" },{ "04", "第4步" },
+                { "05", "第5步" },{ "06", "第6步" },{ "07", "第7步" },{ "19", "9个指令" },
+                { "18", "8个指令" },{ "17", "7个指令" },{ "51", "共检测1次" },{ "52", "共检测2次" },
+                { "53", "共检测3次" },{ "61", "服务器端准备就绪状态" },{ "62", "服务器端放样品状态" },
+                { "63", "服务器端收数状态" },{ "64", "服务器端换点状态" },{ "65", "客户端准备就绪状态" },
+                { "66", "客户端激发状态" },{ "67", "客户端发送数据状态" },
+                { "6a", "本次为第1次检测" },{ "6b", "本次为第2次检测" },{ "6c", "本次为第3次检测" },
+                { "6A", "本次为第1次检测" },{ "6B", "本次为第2次检测" },{ "6C", "本次为第3次检测" },
+                { "71", "镨钕合金曲线" },{ "72", "机械手将样品放到稀土分析仪上" },
+                { "73", "服务器端询问客户端是否结束分析" },{ "74", "服务器端准备接收数据" },
+                { "75", "机械手进行换点操作" },{ "76", "移走样品，刷电极" },
+                { "81", "20控样" },{ "82", "25控样" }
+
+            };
+            if (meaning.TryGetValue(Hex, out value))
+            {
+                Console.WriteLine("For key  = {0}, value = {1}.", Hex, value);
+            }
+            else
+            {
+                Console.WriteLine("Key  = {0} is not found.", Hex);
+                value = Hex;
+            }
+            return value;
         }
 
         //write out string in the show box
@@ -169,7 +211,7 @@ namespace Client
                     {
                         //write down what you recieved from server
                         ServerDisplay(ByteArrayToHexString(obj.buffer, bytes));
-                        LogWriteS(ByteArrayToHexString(obj.buffer,bytes));
+                        LogWriteS("[** 服务器 --> 你 **]："+ ByteArrayToHexString(obj.buffer,bytes));
                         Console.WriteLine("Read logWrite obj.buffer ： " + Encoding.UTF8.GetString(obj.buffer, 0, bytes));
                         //Console.WriteLine("Read logWrite bytes ： " + bytes.ToString());
                         //Console.WriteLine("Read logWrite obj.buffer.Length ： " + obj.buffer.Length.ToString());
@@ -284,8 +326,6 @@ namespace Client
         /*Send message*/
         private void Send(byte[] msg)
         {
-            //StringToByteArray
-            //Encoding.UTF8.GetBytes
             //byte[] buffer = msg;
             if (obj.client.Connected)
             {
@@ -355,25 +395,51 @@ namespace Client
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            String step = StepText.Text;
-            String length = LengthText.Text;
-            String test = TestingText.Text;
-            String sampNum = SampleNumText.Text;
-            String totalNum = TotalNumText.Text;
-            String testNum = TestNumText.Text;
-            String data = DataText.Text;
-            String addi = AddComText.Text;
-            MessageBox.Show(step +" " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data);
-            string msg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data;
-            Console.WriteLine("SendTextbox msg ： ", msg);
-            sendTextBox.Clear();
-            LogWrite(Encoding.UTF8.GetBytes("[** 你 --> 服务器 **]：" + msg));
-            if (connected)
-            {
-                //StringToByteArray
-                //Encoding.UTF8.GetBytes
-                TaskSend(StringToByteArray(msg));
-            }
+            //if (StepText.Text.Length > 0 && LengthText.Text.Length > 0 && TestingText.Text.Length > 0 && SampleNumText.Text.Length > 0 && TotalNumText.Text.Length > 0 && TestNumText.Text.Length > 0 && DataText.Text.Length > 0 && AddComText.Text.Length > 0 )
+            //{
+                String step = StepText.Text;
+                String length = LengthText.Text;
+                String test = TestingText.Text;
+                String sampNum = SampleNumText.Text;
+                String totalNum = TotalNumText.Text;
+                String testNum = TestNumText.Text;
+                String data = DataText.Text;
+                String addi = AddComText.Text;
+
+                if (connected)
+                {
+                    String final = "操作步骤：" + GetMeaning(step) + "\n指令总长度：" + GetMeaning(length) + "\n校验：" + GetMeaning(test) + "\n样品号：" + GetMeaning(sampNum) + "\n总检测次数：" + GetMeaning(totalNum) + "\n状态/检测次数：" + GetMeaning(testNum) + "\n分析流程/信息交流：" + GetMeaning(addi) + "\n分析数据（数据次序：Pr、Nd、Ti、Mo、W、Al、Si、Fe、C）：\n" + GetMeaning(data);
+                    DialogResult result = MessageBox.Show(final, "发送信息到服务器", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                    if (result == DialogResult.OK)
+                    {
+                        string msg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data;
+                        Console.WriteLine("SendTextbox msg ： ", Encoding.UTF8.GetBytes(msg));
+                        //StringToByteArray
+                        //Encoding.UTF8.GetBytes
+                        TaskSend(StringToByteArray(msg));
+                        //clear everything
+                        //StepText.Clear();
+                        //LengthText.Clear();
+                        //TestingText.Clear();
+                        //SampleNumText.Clear();
+                        //TotalNumText.Clear();
+                        //TestNumText.Clear();
+                        //DataText.Clear();
+                        //AddComText.Clear();
+                        LogWrite(Encoding.UTF8.GetBytes("[** 你 --> 服务器 **]：" + msg));
+
+                    }
+
+                    //this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("你还未连接服务器，请先连接服务器。", "注意", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //this.Close();
+                    // Do something  
+                }
+
+            //}
         }
 
         //write out string in the show box
@@ -393,17 +459,17 @@ namespace Client
                             
                             if (i == 3 )
                             {
-                                labels[3].Text = msgSplit[3] + " "+ msgSplit[4];
+                                labels[3].Text = GetMeaning(msgSplit[3] + " "+ msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8]);
                                 labels[3].Refresh();
                             }
                             else if (i>=4)
                             {
-                                labels[i].Text = msgSplit[i+1];
+                                labels[i].Text = GetMeaning(msgSplit[i+5]);
                                 labels[i].Refresh();
                             }
                             else 
                             {
-                                labels[i].Text = msgSplit[i];
+                                labels[i].Text = GetMeaning(msgSplit[i]);
                                 labels[i].Refresh();
                             }
                                 
@@ -415,7 +481,6 @@ namespace Client
                 });
             }
         }
-
 
     }
 }
