@@ -67,3 +67,23 @@ C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Cl
 C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.exe
 C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.pdb
 C:\Users\zhouc\Desktop\C#\chatchat\Client - String meaning\Client\obj\Release\Client.csprojAssemblyReference.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\bin\Release\Client.exe.config
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\bin\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\bin\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.csprojAssemblyReference.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.Client.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.csproj.GenerateResource.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function\Client\obj\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\bin\Release\Client.exe.config
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\bin\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\bin\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.csprojAssemblyReference.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.Client.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.csproj.GenerateResource.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.exe
+C:\Users\zhouc\Desktop\C#\chatchat\Client - Function Done\Client\obj\Release\Client.pdb

@@ -35,17 +35,14 @@
             this.localaddrMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
             this.logLabel = new System.Windows.Forms.Label();
             this.logTextBox = new System.Windows.Forms.TextBox();
-            this.sendLabel = new System.Windows.Forms.Label();
-            this.sendTextBox = new System.Windows.Forms.TextBox();
-            this.clearButton = new System.Windows.Forms.Button();
             this.ClientSideInfos = new System.Windows.Forms.GroupBox();
+            this.ChecksumLabel = new System.Windows.Forms.Label();
             this.DataText = new System.Windows.Forms.TextBox();
             this.AddInfoLabel = new System.Windows.Forms.Label();
             this.AddComText = new System.Windows.Forms.MaskedTextBox();
             this.TestNumText = new System.Windows.Forms.MaskedTextBox();
             this.TotalNumText = new System.Windows.Forms.MaskedTextBox();
             this.SampleNumText = new System.Windows.Forms.MaskedTextBox();
-            this.TestingText = new System.Windows.Forms.MaskedTextBox();
             this.LengthText = new System.Windows.Forms.MaskedTextBox();
             this.StepText = new System.Windows.Forms.MaskedTextBox();
             this.DataLabel = new System.Windows.Forms.Label();
@@ -79,6 +76,7 @@
             // 
             // connectButton
             // 
+            this.connectButton.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.connectButton.Location = new System.Drawing.Point(13, 13);
             this.connectButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 10);
             this.connectButton.Name = "connectButton";
@@ -136,7 +134,7 @@
             // logLabel
             // 
             this.logLabel.AutoSize = true;
-            this.logLabel.Location = new System.Drawing.Point(13, 590);
+            this.logLabel.Location = new System.Drawing.Point(13, 602);
             this.logLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.logLabel.Name = "logLabel";
             this.logLabel.Size = new System.Drawing.Size(89, 20);
@@ -152,52 +150,19 @@
             this.logTextBox.Name = "logTextBox";
             this.logTextBox.ReadOnly = true;
             this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logTextBox.Size = new System.Drawing.Size(939, 70);
+            this.logTextBox.Size = new System.Drawing.Size(939, 114);
             this.logTextBox.TabIndex = 30;
             this.logTextBox.TabStop = false;
             // 
-            // sendLabel
-            // 
-            this.sendLabel.AutoSize = true;
-            this.sendLabel.Location = new System.Drawing.Point(10, 700);
-            this.sendLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.sendLabel.Name = "sendLabel";
-            this.sendLabel.Size = new System.Drawing.Size(49, 20);
-            this.sendLabel.TabIndex = 33;
-            this.sendLabel.Text = "发送";
-            // 
-            // sendTextBox
-            // 
-            this.sendTextBox.Location = new System.Drawing.Point(13, 720);
-            this.sendTextBox.Margin = new System.Windows.Forms.Padding(4);
-            this.sendTextBox.Name = "sendTextBox";
-            this.sendTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.sendTextBox.Size = new System.Drawing.Size(939, 30);
-            this.sendTextBox.TabIndex = 32;
-            this.sendTextBox.TabStop = false;
-            this.sendTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SendTextBox_KeyDown);
-            // 
-            // clearButton
-            // 
-            this.clearButton.Location = new System.Drawing.Point(836, 590);
-            this.clearButton.Margin = new System.Windows.Forms.Padding(4);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(116, 28);
-            this.clearButton.TabIndex = 34;
-            this.clearButton.TabStop = false;
-            this.clearButton.Text = "清空对话";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
-            // 
             // ClientSideInfos
             // 
+            this.ClientSideInfos.Controls.Add(this.ChecksumLabel);
             this.ClientSideInfos.Controls.Add(this.DataText);
             this.ClientSideInfos.Controls.Add(this.AddInfoLabel);
             this.ClientSideInfos.Controls.Add(this.AddComText);
             this.ClientSideInfos.Controls.Add(this.TestNumText);
             this.ClientSideInfos.Controls.Add(this.TotalNumText);
             this.ClientSideInfos.Controls.Add(this.SampleNumText);
-            this.ClientSideInfos.Controls.Add(this.TestingText);
             this.ClientSideInfos.Controls.Add(this.LengthText);
             this.ClientSideInfos.Controls.Add(this.StepText);
             this.ClientSideInfos.Controls.Add(this.DataLabel);
@@ -207,6 +172,7 @@
             this.ClientSideInfos.Controls.Add(this.TestLabel);
             this.ClientSideInfos.Controls.Add(this.LengthLabel);
             this.ClientSideInfos.Controls.Add(this.StepLabel);
+            this.ClientSideInfos.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ClientSideInfos.Location = new System.Drawing.Point(13, 75);
             this.ClientSideInfos.Name = "ClientSideInfos";
             this.ClientSideInfos.Size = new System.Drawing.Size(939, 256);
@@ -214,19 +180,29 @@
             this.ClientSideInfos.TabStop = false;
             this.ClientSideInfos.Text = "客户端信息";
             // 
+            // ChecksumLabel
+            // 
+            this.ChecksumLabel.AutoSize = true;
+            this.ChecksumLabel.Location = new System.Drawing.Point(804, 172);
+            this.ChecksumLabel.Name = "ChecksumLabel";
+            this.ChecksumLabel.Size = new System.Drawing.Size(29, 20);
+            this.ChecksumLabel.TabIndex = 47;
+            this.ChecksumLabel.Text = "FF";
+            this.ChecksumLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // DataText
             // 
-            this.DataText.Location = new System.Drawing.Point(23, 162);
+            this.DataText.Location = new System.Drawing.Point(24, 162);
             this.DataText.Multiline = true;
             this.DataText.Name = "DataText";
-            this.DataText.Size = new System.Drawing.Size(558, 78);
+            this.DataText.Size = new System.Drawing.Size(518, 78);
             this.DataText.TabIndex = 46;
-            this.DataText.Text = "32 48 97 51 24 86 37 89 32 48 97 51 24 86 37 89 32 48 97 51 24 86 37 89 32 48 97";
+            this.DataText.Text = "32.4897 51.2486 37.8932 48.9751 24.8637 89.3248 97.5124 86.3789 32.4897";
             // 
             // AddInfoLabel
             // 
             this.AddInfoLabel.AutoSize = true;
-            this.AddInfoLabel.Location = new System.Drawing.Point(598, 134);
+            this.AddInfoLabel.Location = new System.Drawing.Point(533, 134);
             this.AddInfoLabel.Name = "AddInfoLabel";
             this.AddInfoLabel.Size = new System.Drawing.Size(179, 20);
             this.AddInfoLabel.TabIndex = 44;
@@ -234,7 +210,7 @@
             // 
             // AddComText
             // 
-            this.AddComText.Location = new System.Drawing.Point(630, 162);
+            this.AddComText.Location = new System.Drawing.Point(594, 162);
             this.AddComText.Mask = "&&";
             this.AddComText.Name = "AddComText";
             this.AddComText.Size = new System.Drawing.Size(44, 30);
@@ -244,12 +220,12 @@
             // 
             // TestNumText
             // 
-            this.TestNumText.Location = new System.Drawing.Point(694, 77);
-            this.TestNumText.Mask = "&&";
+            this.TestNumText.Location = new System.Drawing.Point(683, 77);
+            this.TestNumText.Mask = "&& &&";
             this.TestNumText.Name = "TestNumText";
-            this.TestNumText.Size = new System.Drawing.Size(44, 30);
+            this.TestNumText.Size = new System.Drawing.Size(96, 30);
             this.TestNumText.TabIndex = 42;
-            this.TestNumText.Text = "61";
+            this.TestNumText.Text = "6100";
             this.TestNumText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // TotalNumText
@@ -264,23 +240,13 @@
             // 
             // SampleNumText
             // 
-            this.SampleNumText.Location = new System.Drawing.Point(215, 77);
-            this.SampleNumText.Mask = "&& && && && && &&";
+            this.SampleNumText.Location = new System.Drawing.Point(249, 77);
+            this.SampleNumText.Mask = "9999999";
             this.SampleNumText.Name = "SampleNumText";
-            this.SampleNumText.Size = new System.Drawing.Size(213, 30);
+            this.SampleNumText.Size = new System.Drawing.Size(162, 30);
             this.SampleNumText.TabIndex = 40;
-            this.SampleNumText.Text = "324897517461";
+            this.SampleNumText.Text = "4569837";
             this.SampleNumText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // TestingText
-            // 
-            this.TestingText.Location = new System.Drawing.Point(819, 162);
-            this.TestingText.Mask = "&&";
-            this.TestingText.Name = "TestingText";
-            this.TestingText.Size = new System.Drawing.Size(58, 30);
-            this.TestingText.TabIndex = 39;
-            this.TestingText.Text = "21";
-            this.TestingText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // LengthText
             // 
@@ -305,20 +271,20 @@
             // DataLabel
             // 
             this.DataLabel.AutoSize = true;
-            this.DataLabel.Location = new System.Drawing.Point(20, 134);
+            this.DataLabel.Location = new System.Drawing.Point(2, 134);
             this.DataLabel.Name = "DataLabel";
-            this.DataLabel.Size = new System.Drawing.Size(549, 20);
+            this.DataLabel.Size = new System.Drawing.Size(529, 20);
             this.DataLabel.TabIndex = 6;
-            this.DataLabel.Text = "分析数据（数据次序：Pr、Nd、Ti、Mo、W、Al、Si、Fe、C）";
+            this.DataLabel.Text = "分析数据(数据次序：Pr、Nd、Ti、Mo、W、Al、Si、Fe、C)";
             // 
             // TestNumLabel
             // 
             this.TestNumLabel.AutoSize = true;
             this.TestNumLabel.Location = new System.Drawing.Point(655, 41);
             this.TestNumLabel.Name = "TestNumLabel";
-            this.TestNumLabel.Size = new System.Drawing.Size(139, 20);
+            this.TestNumLabel.Size = new System.Drawing.Size(149, 20);
             this.TestNumLabel.TabIndex = 5;
-            this.TestNumLabel.Text = "状态/检测次数";
+            this.TestNumLabel.Text = "状态和检测次数";
             // 
             // TotalTestLabel
             // 
@@ -340,12 +306,12 @@
             // 
             // TestLabel
             // 
-            this.TestLabel.AutoSize = true;
-            this.TestLabel.Location = new System.Drawing.Point(819, 134);
+            this.TestLabel.Location = new System.Drawing.Point(718, 122);
             this.TestLabel.Name = "TestLabel";
-            this.TestLabel.Size = new System.Drawing.Size(49, 20);
+            this.TestLabel.Size = new System.Drawing.Size(215, 44);
             this.TestLabel.TabIndex = 2;
-            this.TestLabel.Text = "校验";
+            this.TestLabel.Text = "校验\r\n(无需输入，自动更新)";
+            this.TestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LengthLabel
             // 
@@ -367,6 +333,7 @@
             // 
             // btnSubmit
             // 
+            this.btnSubmit.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.btnSubmit.Location = new System.Drawing.Point(774, 316);
             this.btnSubmit.Margin = new System.Windows.Forms.Padding(4);
             this.btnSubmit.Name = "btnSubmit";
@@ -395,9 +362,10 @@
             this.SBox1.Controls.Add(this.Slabel3);
             this.SBox1.Controls.Add(this.Slabel2);
             this.SBox1.Controls.Add(this.Slabel1);
+            this.SBox1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.SBox1.Location = new System.Drawing.Point(14, 337);
             this.SBox1.Name = "SBox1";
-            this.SBox1.Size = new System.Drawing.Size(939, 246);
+            this.SBox1.Size = new System.Drawing.Size(939, 262);
             this.SBox1.TabIndex = 44;
             this.SBox1.TabStop = false;
             this.SBox1.Text = "服务器信息";
@@ -405,78 +373,87 @@
             // Slabel18
             // 
             this.Slabel18.AutoSize = true;
-            this.Slabel18.Location = new System.Drawing.Point(724, 193);
+            this.Slabel18.Location = new System.Drawing.Point(689, 193);
             this.Slabel18.Name = "Slabel18";
             this.Slabel18.Size = new System.Drawing.Size(29, 20);
             this.Slabel18.TabIndex = 15;
             this.Slabel18.Text = "  ";
+            this.Slabel18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel17
             // 
             this.Slabel17.AutoSize = true;
-            this.Slabel17.Location = new System.Drawing.Point(479, 193);
+            this.Slabel17.Location = new System.Drawing.Point(462, 193);
             this.Slabel17.Name = "Slabel17";
             this.Slabel17.Size = new System.Drawing.Size(29, 20);
             this.Slabel17.TabIndex = 14;
             this.Slabel17.Text = "  ";
+            this.Slabel17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel16
             // 
             this.Slabel16.AutoSize = true;
-            this.Slabel16.Location = new System.Drawing.Point(210, 193);
+            this.Slabel16.Location = new System.Drawing.Point(36, 193);
             this.Slabel16.Name = "Slabel16";
             this.Slabel16.Size = new System.Drawing.Size(29, 20);
             this.Slabel16.TabIndex = 13;
             this.Slabel16.Text = "  ";
+            this.Slabel16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel15
             // 
             this.Slabel15.AutoSize = true;
-            this.Slabel15.Location = new System.Drawing.Point(36, 193);
+            this.Slabel15.Location = new System.Drawing.Point(724, 85);
             this.Slabel15.Name = "Slabel15";
             this.Slabel15.Size = new System.Drawing.Size(29, 20);
             this.Slabel15.TabIndex = 12;
             this.Slabel15.Text = "  ";
+            this.Slabel15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel14
             // 
             this.Slabel14.AutoSize = true;
-            this.Slabel14.Location = new System.Drawing.Point(625, 85);
+            this.Slabel14.Location = new System.Drawing.Point(539, 85);
             this.Slabel14.Name = "Slabel14";
             this.Slabel14.Size = new System.Drawing.Size(29, 20);
             this.Slabel14.TabIndex = 11;
             this.Slabel14.Text = "  ";
+            this.Slabel14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel13
             // 
             this.Slabel13.AutoSize = true;
-            this.Slabel13.Location = new System.Drawing.Point(436, 85);
+            this.Slabel13.Location = new System.Drawing.Point(330, 85);
             this.Slabel13.Name = "Slabel13";
             this.Slabel13.Size = new System.Drawing.Size(29, 20);
             this.Slabel13.TabIndex = 10;
             this.Slabel13.Text = "  ";
+            this.Slabel13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel12
             // 
             this.Slabel12.AutoSize = true;
-            this.Slabel12.Location = new System.Drawing.Point(220, 85);
+            this.Slabel12.Location = new System.Drawing.Point(165, 85);
             this.Slabel12.Name = "Slabel12";
             this.Slabel12.Size = new System.Drawing.Size(29, 20);
             this.Slabel12.TabIndex = 9;
             this.Slabel12.Text = "  ";
+            this.Slabel12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel11
             // 
             this.Slabel11.AutoSize = true;
-            this.Slabel11.Location = new System.Drawing.Point(36, 85);
+            this.Slabel11.Location = new System.Drawing.Point(6, 85);
             this.Slabel11.Name = "Slabel11";
             this.Slabel11.Size = new System.Drawing.Size(29, 20);
             this.Slabel11.TabIndex = 8;
             this.Slabel11.Text = "  ";
+            this.Slabel11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel8
             // 
             this.Slabel8.AutoSize = true;
+            this.Slabel8.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Slabel8.Location = new System.Drawing.Point(724, 145);
             this.Slabel8.Name = "Slabel8";
             this.Slabel8.Size = new System.Drawing.Size(69, 20);
@@ -486,6 +463,7 @@
             // Slabel7
             // 
             this.Slabel7.AutoSize = true;
+            this.Slabel7.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Slabel7.Location = new System.Drawing.Point(479, 145);
             this.Slabel7.Name = "Slabel7";
             this.Slabel7.Size = new System.Drawing.Size(89, 20);
@@ -495,16 +473,18 @@
             // Slabel6
             // 
             this.Slabel6.AutoSize = true;
-            this.Slabel6.Location = new System.Drawing.Point(220, 145);
+            this.Slabel6.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel6.Location = new System.Drawing.Point(45, 145);
             this.Slabel6.Name = "Slabel6";
-            this.Slabel6.Size = new System.Drawing.Size(139, 20);
+            this.Slabel6.Size = new System.Drawing.Size(149, 20);
             this.Slabel6.TabIndex = 5;
-            this.Slabel6.Text = "状态/检测次数";
+            this.Slabel6.Text = "状态和检测次数";
             // 
             // Slabel5
             // 
             this.Slabel5.AutoSize = true;
-            this.Slabel5.Location = new System.Drawing.Point(36, 145);
+            this.Slabel5.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel5.Location = new System.Drawing.Point(739, 40);
             this.Slabel5.Name = "Slabel5";
             this.Slabel5.Size = new System.Drawing.Size(109, 20);
             this.Slabel5.TabIndex = 4;
@@ -513,7 +493,8 @@
             // Slabel4
             // 
             this.Slabel4.AutoSize = true;
-            this.Slabel4.Location = new System.Drawing.Point(668, 40);
+            this.Slabel4.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel4.Location = new System.Drawing.Point(568, 40);
             this.Slabel4.Name = "Slabel4";
             this.Slabel4.Size = new System.Drawing.Size(69, 20);
             this.Slabel4.TabIndex = 3;
@@ -522,7 +503,8 @@
             // Slabel3
             // 
             this.Slabel3.AutoSize = true;
-            this.Slabel3.Location = new System.Drawing.Point(436, 40);
+            this.Slabel3.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel3.Location = new System.Drawing.Point(378, 40);
             this.Slabel3.Name = "Slabel3";
             this.Slabel3.Size = new System.Drawing.Size(49, 20);
             this.Slabel3.TabIndex = 2;
@@ -531,7 +513,8 @@
             // Slabel2
             // 
             this.Slabel2.AutoSize = true;
-            this.Slabel2.Location = new System.Drawing.Point(220, 40);
+            this.Slabel2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel2.Location = new System.Drawing.Point(189, 40);
             this.Slabel2.Name = "Slabel2";
             this.Slabel2.Size = new System.Drawing.Size(109, 20);
             this.Slabel2.TabIndex = 1;
@@ -540,6 +523,7 @@
             // Slabel1
             // 
             this.Slabel1.AutoSize = true;
+            this.Slabel1.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Slabel1.Location = new System.Drawing.Point(36, 40);
             this.Slabel1.Name = "Slabel1";
             this.Slabel1.Size = new System.Drawing.Size(89, 20);
@@ -554,9 +538,6 @@
             this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.SBox1);
             this.Controls.Add(this.ClientSideInfos);
-            this.Controls.Add(this.clearButton);
-            this.Controls.Add(this.sendLabel);
-            this.Controls.Add(this.sendTextBox);
             this.Controls.Add(this.logLabel);
             this.Controls.Add(this.logTextBox);
             this.Controls.Add(this.connectButton);
@@ -591,9 +572,6 @@
         private System.Windows.Forms.MaskedTextBox localaddrMaskedTextBox;
         private System.Windows.Forms.Label logLabel;
         private System.Windows.Forms.TextBox logTextBox;
-        private System.Windows.Forms.Label sendLabel;
-        private System.Windows.Forms.TextBox sendTextBox;
-        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.GroupBox ClientSideInfos;
         private System.Windows.Forms.Label DataLabel;
         private System.Windows.Forms.Label TestNumLabel;
@@ -605,7 +583,6 @@
         private System.Windows.Forms.MaskedTextBox TestNumText;
         private System.Windows.Forms.MaskedTextBox TotalNumText;
         private System.Windows.Forms.MaskedTextBox SampleNumText;
-        private System.Windows.Forms.MaskedTextBox TestingText;
         private System.Windows.Forms.MaskedTextBox LengthText;
         private System.Windows.Forms.MaskedTextBox StepText;
         private System.Windows.Forms.Button btnSubmit;
@@ -629,6 +606,7 @@
         private System.Windows.Forms.Label Slabel12;
         private System.Windows.Forms.Label Slabel11;
         private System.Windows.Forms.TextBox DataText;
+        private System.Windows.Forms.Label ChecksumLabel;
     }
 }
 

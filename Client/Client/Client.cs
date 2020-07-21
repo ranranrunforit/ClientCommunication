@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 
 namespace Client
 {
@@ -32,11 +33,24 @@ namespace Client
             InitializeComponent();
         }
 
+        //calculate checksum
+        private string CalculateChecksum(string dataToCalculate)
+        {
+            byte[] byteToCalculate = Encoding.ASCII.GetBytes(dataToCalculate);
+            int checksum = 0;
+            foreach (byte chData in byteToCalculate)
+            {
+                checksum += chData;
+            }
+            checksum &= 0xff;
+            return checksum.ToString("X2");
+        }
+
         //used it when reading recieved data from server
         public static string ByteArrayToHexString(byte[] Bytes, int length)
         {
             StringBuilder Result = new StringBuilder(length * 2);
-            string HexAlphabet = "0123456789abcdef";
+            string HexAlphabet = "0123456789ABCDEF";
             /*
              foreach (byte B in Bytes)
             {
@@ -70,10 +84,88 @@ namespace Client
             */
             for (int i = 0; i < hexValuesSplit.Length; i += 1)
             {
+            
                 bytes[i] = Convert.ToByte(hexValuesSplit[i], 16);
             }
             return bytes;
             //return Enumerable.Range(0, Hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(Hex.Substring(x, 2), 16)).ToArray();
+        }
+
+        //convert large integer string to (split)4-Bytes HEX string
+        public static string IntStringToHEXString(String s)
+        {
+            var result = new List<byte>();
+            result.Add(0);
+            foreach (char c in s)
+            {
+                int val = (int)(c - '0');
+                for (int i = 0; i < result.Count; i++)
+                {
+                    int digit = result[i] * 10 + val;
+                    result[i] = (byte)(digit & 0x0F);
+                    val = digit >> 4;
+                }
+                if (val != 0)
+                    result.Add((byte)val);
+            }
+
+            string hex = "";
+            foreach (byte b in result)
+                hex = "0123456789ABCDEF"[b] + hex;
+            //hex = hex.PadLeft(6, '0');
+            Console.WriteLine("IntStringToHEXString hex ： " + Regex.Replace(hex.PadLeft(6, '0'), ".{2}", "$0 ").TrimEnd());
+            //return hex;
+            //.Trim();.TrimEnd();.TrimStart();
+            //PadLeft(6, '0')
+            return Regex.Replace(hex.PadLeft(6, '0'), ".{2}", "$0 ").TrimEnd();
+        }
+
+        //Pre sample number processing
+        //split the two sample numbers, convert to hex, then put them together
+        public static string PreHex(String SampleNumText)
+        {
+            string[] sampSplit = SampleNumText.Split(' ');
+            //String sampNum0 = IntStringToHEXString(sampSplit[0]);
+            //String sampNum1 = IntStringToHEXString(sampSplit[1]);
+            String sampNum = "";
+            foreach (string samp in sampSplit)
+            {
+                sampNum = sampNum + " " + IntStringToHEXString(samp);
+            }
+            //String sampNum = sampNum0 + " " + sampNum1;
+            //String sampNum = (sampNum0 + sampNum1).TrimEnd();
+            return sampNum.Trim().TrimEnd();
+
+        }
+
+        //convert HEX to large integer
+        public static string HexToDecimal(string hex)
+        {
+            List<int> dec = new List<int> { 0 };   // decimal result
+
+            foreach (char c in hex)
+            {
+                int carry = Convert.ToInt32(c.ToString(), 16);
+                // initially holds decimal value of current hex digit;
+                // subsequently holds carry-over for multiplication
+
+                for (int i = 0; i < dec.Count; ++i)
+                {
+                    int val = dec[i] * 16 + carry;
+                    dec[i] = val % 10;
+                    carry = val / 10;
+                }
+
+                while (carry > 0)
+                {
+                    dec.Add(carry % 10);
+                    carry /= 10;
+                }
+            }
+
+            var chars = dec.Select(d => (char)('0' + d));
+            var cArr = chars.Reverse().ToArray();
+            return new string(cArr);
         }
 
         //get meaning of Hex String
@@ -355,7 +447,8 @@ namespace Client
             }
         }
 
-        /*TextBox send event*/
+        /*TextBox send event now no longer use*/
+        /*
         private void SendTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -377,6 +470,7 @@ namespace Client
                 }
             }
         }
+        */
 
         /*Closed the client side*/
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -387,11 +481,13 @@ namespace Client
                 obj.client.Close();
             }
         }
-        /*Clear button click*/
+        /*Clear button click now no longer use*/
+        /*
         private void ClearButton_Click(object sender, EventArgs e)
         {
             LogWrite();
         }
+        */
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
@@ -399,20 +495,23 @@ namespace Client
             //{
                 String step = StepText.Text;
                 String length = LengthText.Text;
-                String test = TestingText.Text;
-                String sampNum = SampleNumText.Text;
+                //String test = TestingText.Text;
+                String sampNum = PreHex(SampleNumText.Text); 
                 String totalNum = TotalNumText.Text;
-                String testNum = TestNumText.Text;
-                String data = DataText.Text;
+                String[] testNum = TestNumText.Text.Split(' ');
+                String data = PreHex(DataText.Text.Replace(".", ""));
                 String addi = AddComText.Text;
+                String test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + testNum + " " + data + " " + addi);
+                ChecksumLabel.Text = test;
+                ChecksumLabel.Refresh();
 
-                if (connected)
+            if (connected)
                 {
-                    String final = "操作步骤：" + GetMeaning(step) + "\n指令总长度：" + GetMeaning(length) + "\n校验：" + GetMeaning(test) + "\n样品号：" + GetMeaning(sampNum) + "\n总检测次数：" + GetMeaning(totalNum) + "\n状态/检测次数：" + GetMeaning(testNum) + "\n分析流程/信息交流：" + GetMeaning(addi) + "\n分析数据（数据次序：Pr、Nd、Ti、Mo、W、Al、Si、Fe、C）：\n" + GetMeaning(data);
-                    DialogResult result = MessageBox.Show(final, "发送信息到服务器", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                    String final = "操作步骤：" + GetMeaning(step) + "\n指令总长度：" + GetMeaning(length) + "\n校验：" + GetMeaning(test) + "\n样品号：" + SampleNumText.Text + "（16进制：" + sampNum +")"+ "\n总检测次数：" + GetMeaning(totalNum) + "\n状态/检测次数：" + GetMeaning(testNum[0]) +" "+ GetMeaning(testNum[1]) + "\n分析流程/信息交流：" + GetMeaning(addi) + "\n分析数据（数据次序：Pr、Nd、Ti、Mo、W、Al、Si、Fe、C）：\n" + DataText.Text + "\n乘以10000：" + DataText.Text.Replace(".", "") + "\n16进制：" + data;
+                    DialogResult result = MessageBox.Show(final, "发送信息到服务器", MessageBoxButtons.OKCancel, MessageBoxIcon.Information); 
                     if (result == DialogResult.OK)
                     {
-                        string msg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + testNum + " " + addi + " " + data;
+                        string msg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + TestNumText.Text + " " + addi + " " + data;
                         Console.WriteLine("SendTextbox msg ： ", Encoding.UTF8.GetBytes(msg));
                         //StringToByteArray
                         //Encoding.UTF8.GetBytes
@@ -420,7 +519,6 @@ namespace Client
                         //clear everything
                         //StepText.Clear();
                         //LengthText.Clear();
-                        //TestingText.Clear();
                         //SampleNumText.Clear();
                         //TotalNumText.Clear();
                         //TestNumText.Clear();
@@ -454,22 +552,43 @@ namespace Client
                     {
                         string[] msgSplit = msg.Split(' ');
                         Label[] labels = { Slabel11, Slabel12, Slabel13, Slabel14, Slabel15, Slabel16, Slabel17, Slabel18 };
+                        Console.WriteLine("ServerDisplay msg length ： ", msgSplit.Length.ToString());
+                        String Stest = CalculateChecksum(msgSplit[0] + " " + msgSplit[1] + " " + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8] + " " + msgSplit[9] + " " + msgSplit[10]);
                         for (int i = 0; i < labels.Length; i += 1)
                         {
                             
                             if (i == 3 )
                             {
-                                labels[3].Text = GetMeaning(msgSplit[3] + " "+ msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8]);
+                                //labels[3].Text = GetMeaning(msgSplit[3] + " "+ msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8]);
+                                labels[3].Text = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + Environment.NewLine + "（16进制：" + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + ")";
                                 labels[3].Refresh();
                             }
-                            else if (i>=4)
+                            else if (i==4 )
                             {
-                                labels[i].Text = GetMeaning(msgSplit[i+5]);
+                                labels[i].Text = GetMeaning(msgSplit[i+2]) + Environment.NewLine + "（16进制：" + msgSplit[i+2] + ")";
+                                labels[i].Refresh();
+                            }
+                            else if (i == 2)
+                            {
+                                String check = "";
+                                if (Stest == msgSplit[i]) { check = "传输正常"; }
+                                else { check = "传输不正常，有损失"; }
+                                labels[i].Text = check + " "+Stest + Environment.NewLine + "（16进制：" + msgSplit[i] + ")";
+                                labels[i].Refresh();
+                            }
+                            else if (i == 5)
+                            {
+                                labels[i].Text = GetMeaning(msgSplit[i+2]) +" "+ GetMeaning(msgSplit[i+3]) + Environment.NewLine + "（16进制：" + msgSplit[i+2]+" "+ msgSplit[i+3] + ")";
+                                labels[i].Refresh();
+                            }
+                            else if (i > 5)
+                            {
+                                labels[i].Text = GetMeaning(msgSplit[i+3]) + Environment.NewLine + "（16进制：" + msgSplit[i+3] + ")";
                                 labels[i].Refresh();
                             }
                             else 
                             {
-                                labels[i].Text = GetMeaning(msgSplit[i]);
+                                labels[i].Text = GetMeaning(msgSplit[i]) + Environment.NewLine + "（16进制：" + msgSplit[i] + ")";
                                 labels[i].Refresh();
                             }
                                 
