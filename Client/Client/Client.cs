@@ -9,10 +9,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Client
 {
-    public partial class client : Form
+    //handle when connected to Server
+    public class ConnectedEventArgs : EventArgs
+    {
+        public bool Connect { get; set; }
+    }
+
+    //handle when server side order changed
+    public class ServersideEventArgs : EventArgs
+    {
+        public string Serverside { get; set; }
+    }
+    public partial class client
     {
         private bool connected = false;
         private Thread Tclient = null;
@@ -26,16 +39,63 @@ namespace Client
         private MyClient obj;
         private Task send = null;
         private bool exit = false;
-        public static string DataStore = "";
-        public static string DataText = "无数据";
-        public static string data = "";
+        private string DataAvg = "";
+        private string DataText = "无数据";
+        private string data = "";
+        private bool Ready = false;
+        private string order = "";//don't acces this variable: it's just for storing the value in it
+        private string serverside = "";
+        private string clientside = "";
+
+        
+        //private string variable = "";
+        //replyOrder property contains Ready.
+        //reply Order when it's ready.
+        public bool replyOrder //this variable should be used by all your code
+        {
+            get { return Ready; }
+            set
+            {
+                Ready = value;
+                if (Ready == true) 
+                {
+                    Reply(order);
+                    Ready = false;
+                }
+            }
+        }
+
+        //handle when server side order changed
+        protected virtual void OnServersideChanged(ServersideEventArgs e)
+        {
+            EventHandler<ServersideEventArgs> handler = ServersideChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        public event EventHandler<ServersideEventArgs> ServersideChanged;
+
+        //handle when connected to Server
+        protected virtual void OnConnected(ConnectedEventArgs e)
+        {
+            EventHandler<ConnectedEventArgs> handler = Connected;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        public event EventHandler<ConnectedEventArgs> Connected;
+
         public client()
         {
             InitializeComponent();
         }
 
         //calculate checksum
-        private string CalculateChecksum(string dataToCalculate)
+        public static string CalculateChecksum(string dataToCalculate)
         {
             byte[] byteToCalculate = Encoding.ASCII.GetBytes(dataToCalculate);
             int checksum = 0;
@@ -52,13 +112,7 @@ namespace Client
         {
             StringBuilder Result = new StringBuilder(length * 2);
             string HexAlphabet = "0123456789ABCDEF";
-            /*
-             foreach (byte B in Bytes)
-            {
-                Result.Append(HexAlphabet[(int)(B >> 4)]);
-                Result.Append(HexAlphabet[(int)(B & 0xF)]);
-            }
-             */
+
             for (int i = 0; i < length; i += 1)
             {
                 Result.Append(HexAlphabet[(int)(Bytes[i] >> 4)]);
@@ -67,9 +121,6 @@ namespace Client
             }
             Console.WriteLine("ByteArrayToHexString result ： " + Result.ToString());
             return Result.ToString();
-            //below works too, just keep it here for now
-            //return BitConverter.ToString(Bytes).Replace("-", " ");
-
 
         }
 
@@ -79,17 +130,13 @@ namespace Client
         {
             string[] hexValuesSplit = Hex.Split(' ');
             byte[] bytes = new byte[hexValuesSplit.Length];
-            /*
-            for (int i = 0; i < Hex.Length; i += 3)
-                bytes[i / 2] = Convert.ToByte(Hex.Substring(i, 2), 16);
-            */
+
             for (int i = 0; i < hexValuesSplit.Length; i += 1)
             {
 
                 bytes[i] = Convert.ToByte(hexValuesSplit[i], 16);
             }
             return bytes;
-            //return Enumerable.Range(0, Hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(Hex.Substring(x, 2), 16)).ToArray();
         }
 
         //convert large integer string to (split)4-Bytes HEX string
@@ -126,15 +173,11 @@ namespace Client
         public static string PreHex(String SampleNumText)
         {
             string[] sampSplit = SampleNumText.Split(' ');
-            //String sampNum0 = IntStringToHEXString(sampSplit[0]);
-            //String sampNum1 = IntStringToHEXString(sampSplit[1]);
             String sampNum = "";
             foreach (string samp in sampSplit)
             {
                 sampNum = sampNum + " " + IntStringToHEXString(samp);
             }
-            //String sampNum = sampNum0 + " " + sampNum1;
-            //String sampNum = (sampNum0 + sampNum1).TrimEnd();
             return sampNum.Trim().TrimEnd();
 
         }
@@ -232,80 +275,30 @@ namespace Client
             }
             return value;
         }
-
-        //write out string in the show box
-        private void LogWriteS(string msg = null)
+        
+        //return message
+        private string ReturnMsg(string msg = null)
         {
             if (!exit)
             {
-                logTextBox.Invoke((MethodInvoker)delegate
+                
+                if (msg == null)
                 {
-                    if (msg == null)
-                    {
-                        logTextBox.Clear();
-                    }
-                    else
-                    {
-                        if (logTextBox.Text.Length > 0)
-                        {
-                            logTextBox.AppendText(Environment.NewLine);
-                        }
-                        logTextBox.AppendText(DateTime.Now.ToString("HH:mm") + " " + msg);
-                    }
-                });
-            }
-        }
-
-        /*Write conversation to the log*/
-        private void LogWrite(byte[] msg = null)
-        {
-            if (!exit)
-            {
-                logTextBox.Invoke((MethodInvoker)delegate
+                    return "信息为空";
+                }
+                else
                 {
-                    if (msg == null)
-                    {
-                        logTextBox.Clear();
-                    }
-                    else
-                    {
-                        if (logTextBox.Text.Length > 0)
-                        {
-                            logTextBox.AppendText(Environment.NewLine);
-                        }
-                        logTextBox.AppendText(DateTime.Now.ToString("HH:mm") + " " + Encoding.UTF8.GetString(msg));
-                    }
-                });
+                    return DateTime.Now.ToString("HH:mm") + " " + msg;
+                }
+                
             }
-        }
-
-        /*the connect button control*/
-        private void Connected(bool status)
-        {
-            if (!exit)
-            {
-                connectButton.Invoke((MethodInvoker)delegate
-                {
-                    connected = status;
-                    if (status)
-                    {
-                        connectButton.Text = "断开";
-                        LogWrite(Encoding.UTF8.GetBytes("[** 客户端(你)已连接 **]"));
-                    }
-                    else
-                    {
-                        connectButton.Text = "连接";
-                        LogWrite(Encoding.UTF8.GetBytes("[** 客户端(你)已断开 **]"));
-                    }
-                });
-            }
+            return "已断开，无信息";
         }
 
         /*Read data from server
          when server send data to client:
-         Read function will process the data    
-         */
-        private void Read(IAsyncResult result)
+         Read function will process the data   */
+        public void Read(IAsyncResult result)
         {
             int bytes = 0;
             if (obj.client.Connected)
@@ -314,38 +307,39 @@ namespace Client
                 {
                     //read the last byte
                     bytes = obj.stream.EndRead(result);
-                    Console.WriteLine("Read EndRead bytes ： " + bytes.ToString());
+                    //Console.WriteLine("Read EndRead bytes ： " + bytes.ToString());
                 }
                 catch (Exception ex)
                 {
-                    LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                    Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                 }
             }
             if (bytes > 0)
             {
-                //obj.data.AppendFormat("{0}", Encoding.UTF8.GetString(obj.buffer, 0, bytes));
                 try
                 {
                     if (obj.stream.DataAvailable)
                     {
                         //actually start to reading and keep reading incase these still left
                         obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), obj);
-                        Console.WriteLine("Read BeginRead obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
+                        //Console.WriteLine("Read BeginRead obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
                     }
                     else
                     {
                         //write down what you recieved from server
-                        LogWriteS("[** 服务器 --> 客户端(你) **]：" + ByteArrayToHexString(obj.buffer, bytes));
-                        ServerDisplay(ByteArrayToHexString(obj.buffer, bytes));
+                        Console.WriteLine("[** 服务器 --> 客户端(你) **]：" + ByteArrayToHexString(obj.buffer, bytes));
+                        order = ByteArrayToHexString(obj.buffer, bytes);
+                        Console.WriteLine("[** 服务器 --> 客户端(你) **] GetOrder(order)：" + GetOrder(order));
 
-                        Console.WriteLine("Read logWrite obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
+                        //GetOrder(ByteArrayToHexString(obj.buffer, bytes)
+                        //Reply(ByteArrayToHexString(obj.buffer, bytes));
+                        //Console.WriteLine("Read logWrite obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
                         obj.handle.Set();
                     }
                 }
                 catch (Exception ex)
                 {
-                    //obj.data.Clear();
-                    LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                    Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                     obj.handle.Set();
                 }
             }
@@ -358,7 +352,7 @@ namespace Client
 
         /*Create a connection with server from address
          this will read the data that send from server side*/
-        private void Connection(IPAddress localaddr, int port)
+        public void Connection(IPAddress localaddr, int port)
         {
             try
             {
@@ -367,9 +361,13 @@ namespace Client
                 obj.client.Connect(localaddr, port);
                 obj.stream = obj.client.GetStream();
                 obj.buffer = new byte[obj.client.ReceiveBufferSize];
-                //obj.data = new StringBuilder();
                 obj.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
-                Connected(true);
+                connected = true;
+                ConnectedEventArgs args = new ConnectedEventArgs();
+                args.Connect = connected;
+                OnConnected(args);
+                clientside = "[** 客户端(你)已连接 **]";
+                Console.WriteLine("[** 客户端(你)已连接 **]");
                 while (obj.client.Connected)
                 {
                     try
@@ -382,20 +380,22 @@ namespace Client
                     }
                     catch (Exception ex)
                     {
-                        LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                        Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                     }
                 }
                 obj.client.Close();
-                Connected(false);
+                connected = false;
+                clientside = "[** 客户端(你)已断开 **]";
+                Console.WriteLine("[** 客户端(你)已断开 **]");
             }
             catch (Exception ex)
             {
-                LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                Console.WriteLine(string.Format("[** {0} **]", ex.Message));
             }
         }
 
         /*ConnectButton_Click event*/
-        private void ConnectButton_Click(object sender, EventArgs e)
+        public void Connect_Click(String ipaddr, String iport)
         {
             if (connected)
             {
@@ -403,20 +403,20 @@ namespace Client
             }
             else if (Tclient == null || !Tclient.IsAlive)
             {
-                bool localaddrResult = IPAddress.TryParse(localaddrMaskedTextBox.Text, out IPAddress localaddr);
+                bool localaddrResult = IPAddress.TryParse(ipaddr, out IPAddress localaddr);
                 if (!localaddrResult)
                 {
-                    LogWrite(Encoding.UTF8.GetBytes("[ IP 地址无效，请重新填写  ]"));
+                    Console.WriteLine(("[ IP 地址无效，请重新填写  ]"));
                 }
-                bool portResult = int.TryParse(portTextBox.Text, out int port);
+                bool portResult = int.TryParse(iport, out int port);
                 if (!portResult)
                 {
-                    LogWrite(Encoding.UTF8.GetBytes("[  端口无效，请重新填写  ]"));
+                    Console.WriteLine(("[  端口无效，请重新填写  ]"));
                 }
                 else if (port < 0 || port > 65535)
                 {
                     portResult = false;
-                    LogWrite(Encoding.UTF8.GetBytes("[  端口超过正常范围(0，65535)，请重新填写  ]"));
+                    Console.WriteLine(("[  端口超过正常范围(0，65535)，请重新填写  ]"));
                 }
                 if (localaddrResult && portResult)
                 {
@@ -430,7 +430,7 @@ namespace Client
         }
 
         /*Write out message*/
-        private void Write(IAsyncResult result)
+        public void Write(IAsyncResult result)
         {
             if (obj.client.Connected)
             {
@@ -441,45 +441,44 @@ namespace Client
                 }
                 catch (Exception ex)
                 {
-                    LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                    Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                 }
             }
         }
 
         /*Send message*/
-        private void Send(byte[] msg)
+        public void Send(byte[] msg)
         {
-            //byte[] buffer = msg;
             if (obj.client.Connected)
             {
                 try
                 {
                     obj.stream.BeginWrite(msg, 0, msg.Length, new AsyncCallback(Write), null);
-                    Console.WriteLine("Send BeginWrite msg ： " + ByteArrayToHexString(msg, msg.Length));
+                    //Console.WriteLine("Send BeginWrite msg ： " + ByteArrayToHexString(msg, msg.Length));
                 }
                 catch (Exception ex)
                 {
-                    LogWrite(Encoding.UTF8.GetBytes(string.Format("[** {0} **]", ex.Message)));
+                    Console.WriteLine(string.Format("[** {0} **]", ex.Message));
                 }
             }
         }
         /*Send the whole task message*/
-        private void TaskSend(byte[] msg)
+        public void TaskSend(byte[] msg)
         {
             if (send == null || send.IsCompleted)
             {
                 send = Task.Factory.StartNew(() => Send(msg));
-                Console.WriteLine("TaskSend if msg ： " + ByteArrayToHexString(msg, msg.Length));
+                //Console.WriteLine("TaskSend if msg ： " + ByteArrayToHexString(msg, msg.Length));
             }
             else
             {
                 send.ContinueWith(antecendent => Send(msg));
-                Console.WriteLine("TaskSend else msg ： " + ByteArrayToHexString(msg, msg.Length));
+                //Console.WriteLine("TaskSend else msg ： " + ByteArrayToHexString(msg, msg.Length));
             }
         }
 
         /*Closed the client side*/
-        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        public void Client_Closing()
         {
             if (connected)
             {
@@ -489,164 +488,169 @@ namespace Client
         }
 
         //write out string in the show box
-        private void ServerDisplay(string msg = null)
+        public string GetOrder(string msg = null)
         {
-            if (!exit)
+            if (connected)
             {
-                SBox1.Invoke((MethodInvoker)delegate
+                if (msg != null)
                 {
-                    if (msg != null)
+                    string[] msgSplit = msg.Split(' ');
+                    string[] labels = { "", "", "", "", "", "", "", "" };
+                    //Console.WriteLine("Replay msg length ： " + msgSplit.Length.ToString());
+                    String Stest = CalculateChecksum(msgSplit[0] + " " + msgSplit[1] + " " + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8] + " " + msgSplit[9] + " " + msgSplit[10]);
+
+
+                    for (int i = 0; i < labels.Length; i += 1)
                     {
-                        string[] msgSplit = msg.Split(' ');
-                        Label[] labels = { Slabel11, Slabel12, Slabel13, Slabel14, Slabel15, Slabel16, Slabel17, Slabel18 };
-                        Console.WriteLine("ServerDisplay msg length ： " + msgSplit.Length.ToString());
-                        String Stest = CalculateChecksum(msgSplit[0] + " " + msgSplit[1] + " " + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8] + " " + msgSplit[9] + " " + msgSplit[10]);
-
-                        for (int i = 0; i < labels.Length; i += 1)
+                        if (i == 3)
                         {
-                            if (i == 3)
-                            {
-                                //labels[3].Text = GetMeaning(msgSplit[3] + " "+ msgSplit[4] + " " + msgSplit[5] + " " + msgSplit[6] + " " + msgSplit[7] + " " + msgSplit[8]);
-                                labels[3].Text = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + Environment.NewLine + "（HEX:" + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + ")";
-                                labels[3].Refresh();
-                            }
-                            else if (i == 4)
-                            {
-                                labels[i].Text = GetMeaning(msgSplit[i + 2]) + Environment.NewLine + "（HEX:" + msgSplit[i + 2] + ")";
-                                labels[i].Refresh();
-                            }
-                            else if (i == 2)
-                            {
-                                String check = "";
-                                if (Stest == msgSplit[i]) { check = "传输正常"; }
-                                else { check = "传输不正常"; }
-                                labels[i].Text = check + Environment.NewLine + "HEX运算:" + Stest + "收到:" + msgSplit[i];
-                                labels[i].Refresh();
-                            }
-                            else if (i == 5)
-                            {
-                                labels[i].Text = GetMeaning(msgSplit[i + 2]) + Environment.NewLine + GetMeaning(msgSplit[i + 3]) + Environment.NewLine + "（HEX:" + msgSplit[i + 2] + " " + msgSplit[i + 3] + ")";
-                                labels[i].Refresh();
-                            }
-                            else if (i > 5)
-                            {
-                                labels[i].Text = GetMeaning(msgSplit[i + 3]) + Environment.NewLine + "（HEX:" + msgSplit[i + 3] + ")";
-                                labels[i].Refresh();
-                            }
-                            else
-                            {
-                                labels[i].Text = GetMeaning(msgSplit[i]) + Environment.NewLine + "（HEX:" + msgSplit[i] + ")";
-                                labels[i].Refresh();
-                            }
-
-                        } //end of for loop
-
-                        String step = msgSplit[0];
-                        String length = GetLength(msgSplit[0], msgSplit[7]);
-                        String sampNum = msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5];
-                        String totalNum = msgSplit[6];
-                        String cond = GetMeaning(msgSplit[0] + msgSplit[6] + msgSplit[7]);
-                        String testNum = msgSplit[8];
-                        String test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum);
-                        string clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum;
-                        String NewData = "";
-                        String x = "";
-                        
-
-                        if (step == "05")
-                        {
-                            x = "第二次";
-                        }
-                        if (step == "07")
-                        {
-                            x = "第三次";
-                        }
-
-                        if (cond == "68" || cond == "69" || cond == "60")
-                        {
-                            //System.Threading.Thread.Sleep(10000);
-                            if (cond == "60")
-                            {
-                                NewData = "32.4897 51.2486 37.8932 48.9751 24.8637 89.3248 97.5124 86.3789 32.4897";
-                            }
-                            if (cond == "68")
-                            {
-                                NewData = "12.4539 93.1587 28.6746 95.1234 46.7895 61.3957 45.7913 73.9628 85.7942";
-                            }
-                            if (cond == "69")
-                            {
-                                NewData = "45.2319 78.2123 90.6743 54.8472 37.1237 91.3697 84.3159 43.1467 23.0351";
-                            }
-
-                            string[] NewDataSplit = NewData.Split(' ');
-                            float[] NewDataint = Array.ConvertAll(NewDataSplit, s => float.Parse(s));
-
-                            if (DataText == "无数据")
-                            {
-                                DataStore = NewData;
-                                DataText = "已得到第一次检测元素分析值。";
-                                data = "已准备";
-                                Console.WriteLine("ServerDisplay NewData DataText ： " + DataText);
-                                Console.WriteLine("ServerDisplay NewData DataStore ： " + DataStore);
-                            }
-                            else
-                            {
-                                string[] DataSplit = DataStore.Split(' ');
-                                float[] DataSplitint = Array.ConvertAll(DataSplit, s => float.Parse(s));
-                                String avg = "";
-                                for (int i = 0; i < NewDataint.Length; i++)
-                                {
-                                    //Math.Round(111.3547198, 4)
-                                    avg = avg + " " + Math.Round(((NewDataint[i] + DataSplitint[i]) / 2), 4).ToString().PadRight(6, '0');
-                                }
-                                DataStore = avg.Trim().TrimEnd();
-                                DataText = "已得到" + x + "检测元素分析值。";
-                                data = "已准备";
-                                Console.WriteLine("ServerDisplay 686960 DataText ： " + DataText);
-                                Console.WriteLine("ServerDisplay 686960 DataStore ： " + DataStore);
-                            }
+                            labels[3] = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]);
 
                         }
-                        else if (cond == "67")
+                        else if (i == 4)
                         {
-                            Console.WriteLine("ServerDisplay 67 DataText ： " + DataText);
-                            DataText = DataStore;
-                            data = PreHex(DataText.Replace(".", ""));
-                            test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data);
+                            labels[i] = GetMeaning(msgSplit[i + 2]);
 
-                            clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data;
-                            DataStore = "";
                         }
-                        else 
+                        else if (i == 2)
                         {
-                            DataText = "无数据";
-                            data = "";
+                            String check = "";
+                            if (Stest == msgSplit[i]) { check = "传输正常"; }
+                            else { check = "传输不正常"; }
+                            labels[i] = check + " " + "HEX运算" + Stest + "收到" + msgSplit[i];
+
+                        }
+                        else if (i == 5)
+                        {
+                            labels[i] = GetMeaning(msgSplit[i + 2]) + " " + GetMeaning(msgSplit[i + 3]);
+
+                        }
+                        else if (i > 5)
+                        {
+                            labels[i] = GetMeaning(msgSplit[i + 3]);
+
+                        }
+                        else
+                        {
+                            labels[i] = GetMeaning(msgSplit[i]);
+
                         }
 
-                        Console.WriteLine("ServerDisplay clientmsg ： " + clientmsg);
-
-                        TaskSend(StringToByteArray(clientmsg));
-                        LogWrite(Encoding.UTF8.GetBytes("[** 客户端(你) --> 服务器 **]：" + clientmsg));
-                        Clabel1.Text = GetMeaning(msgSplit[0]) + Environment.NewLine + "（HEX:" + msgSplit[0] + ")";
-                        Clabel1.Refresh();
-                        Clabel2.Text = GetMeaning(length) + Environment.NewLine + "（HEX:" + length + ")";
-                        Clabel2.Refresh();
-                        Clabel3.Text = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + Environment.NewLine + "（HEX:" + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + ")";
-                        Clabel3.Refresh();
-                        Clabel4.Text = GetMeaning(msgSplit[6]) + Environment.NewLine + "（HEX:" + msgSplit[6] + ")";
-                        Clabel4.Refresh();
-                        Clabel5.Text = GetMeaning(cond) + Environment.NewLine + GetMeaning(testNum) + Environment.NewLine + "（HEX:" + cond + " " + testNum + ")";
-                        Clabel5.Refresh();
-                        Clabel6.Text = DataText + Environment.NewLine + "（HEX:" + data + ")";
-                        Clabel6.Refresh();
-                        Clabel7.Text = test;
-                        Clabel7.Refresh();
-                        
-
-                    }//end of if (msg != null)
-                }); //end of SBox1.Invoke((MethodInvoker)delegate  
+                    } //end of for loop
+                    serverside = string.Join(" ", labels);
+                    ServersideEventArgs args = new ServersideEventArgs();
+                    args.Serverside = serverside;
+                    OnServersideChanged(args);
+                    return serverside;
+                }//end of if (msg != null)
+                else
+                {
+                    return "指令为空";
+                }
             }//end of if (!exit)
+            else
+            {
+                return "你已断开,没得到指令";
+            }
+        }// end of private void GetOrder(string msg = null)
 
-        }// end of private void ServerDisplay(string msg = null)
+        //write out string in the show box
+        public string Reply(string msg = null)
+        {
+            if (connected)
+            {
+                if (msg != null)
+                {
+                    string[] msgSplit = msg.Split(' ');
+
+                    String step = msgSplit[0];
+                    String length = GetLength(msgSplit[0], msgSplit[7]);
+                    String sampNum = msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5];
+                    String totalNum = msgSplit[6];
+                    String cond = GetMeaning(msgSplit[0] + msgSplit[6] + msgSplit[7]);
+                    String testNum = msgSplit[8];
+                    String test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum);
+                    string clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum;
+                    String x = "";
+                    //String NewData = "";
+
+
+                    if (step == "05")
+                    {
+                        x = "第二次";
+                    }
+                    if (step == "07")
+                    {
+                        x = "第三次";
+                    }
+
+
+                    if (cond == "68" || cond == "69" || cond == "60")
+                    {
+
+                        if (DataText == "无数据")
+                        {
+                            DataText = "已得到第一次检测元素分析值。";
+                            data = "已准备";
+
+                        }
+                        else
+                        {
+                            DataText = "已得到" + x + "检测元素分析值。";
+                            data = "已准备";
+
+                        }
+
+                    }
+
+                    //else 
+
+                    if (cond == "67")
+                    {
+                        Console.WriteLine("Replay 67 DataText ： " + DataText);
+                        DataText = DataAvg;
+                        data = PreHex(DataText.Replace(".", ""));
+                        test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data);
+
+                        clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data;
+                        DataAvg = "";
+                    }
+
+                    TaskSend(StringToByteArray(clientmsg));
+                    Console.WriteLine("[** 客户端(你) --> 服务器 **]：" + clientmsg);
+                    serverside = "";
+                    ServersideEventArgs args = new ServersideEventArgs();
+                    args.Serverside = serverside;
+                    OnServersideChanged(args);
+                    clientside = GetMeaning(msgSplit[0]) + " " + GetMeaning(length) + " " + HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + " " + GetMeaning(msgSplit[6]) + " " + GetMeaning(cond) + " " + GetMeaning(testNum) + " " + DataText + " " + test;
+                    return clientside;
+                    /*
+                    Clabel1.Text = GetMeaning(msgSplit[0]) + Environment.NewLine + "（HEX:" + msgSplit[0] + ")";
+                    Clabel1.Refresh();
+                    Clabel2.Text = GetMeaning(length) + Environment.NewLine + "（HEX:" + length + ")";
+                    Clabel2.Refresh();
+                    Clabel3.Text = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + Environment.NewLine + "（HEX:" + msgSplit[3] + " " + msgSplit[4] + " " + msgSplit[5] + ")";
+                    Clabel3.Refresh();
+                    Clabel4.Text = GetMeaning(msgSplit[6]) + Environment.NewLine + "（HEX:" + msgSplit[6] + ")";
+                    Clabel4.Refresh();
+                    Clabel5.Text = GetMeaning(cond) + Environment.NewLine + GetMeaning(testNum) + Environment.NewLine + "（HEX:" + cond + " " + testNum + ")";
+                    Clabel5.Refresh();
+                    Clabel6.Text = DataText + Environment.NewLine + "（HEX:" + data + ")";
+                    Clabel6.Refresh();
+                    Clabel7.Text = test;
+                    Clabel7.Refresh();
+                    */
+                }//end of if (msg != null)
+                else 
+                {
+                    return "回复消息为空";
+                }
+            }//end of if (!exit)
+            else 
+            {
+                return "你已断开，无法回复";
+            }
+
+        }// end of private void Replay(string msg = null)
     }
 }

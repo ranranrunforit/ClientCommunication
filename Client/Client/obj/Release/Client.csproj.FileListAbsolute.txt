@@ -117,3 +117,13 @@ C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL 2\Client\obj\Release\Client.cspr
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL 2\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL 2\Client\obj\Release\Client.dll
 C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL 2\Client\obj\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\bin\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.csproj.GenerateResource.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.csproj.CoreCompileInputs.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.pdb
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\bin\Release\Client.dll.config
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\bin\Release\Client.dll
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.dll
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.csprojAssemblyReference.cache
+C:\Users\zhouc\Desktop\C#\chatchat\Client - DLL - Copy\Client\obj\Release\Client.ConnectedEventArgs.resources

@@ -7,18 +7,7 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        
 
         #region Windows Form Designer generated code
 
@@ -69,7 +58,7 @@
             this.Slabel1 = new System.Windows.Forms.Label();
             this.ClientSideInfos.SuspendLayout();
             this.SBox1.SuspendLayout();
-            this.SuspendLayout();
+
             // 
             // ClientSideInfos
             // 
@@ -283,7 +272,6 @@
             this.connectButton.TabStop = false;
             this.connectButton.Text = "连接";
             this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
             // logTextBox
             // 
@@ -496,6 +484,7 @@
             // 
             // Client
             // 
+            /*
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(982, 753);
@@ -516,14 +505,13 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "客户端";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.ClientSideInfos.ResumeLayout(false);
             this.ClientSideInfos.PerformLayout();
             this.SBox1.ResumeLayout(false);
             this.SBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            */
         }
 
         #endregion
