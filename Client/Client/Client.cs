@@ -11,6 +11,8 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Timers;
 
 namespace Client
 {
@@ -24,6 +26,11 @@ namespace Client
     public class ServersideEventArgs : EventArgs
     {
         public string Serverside { get; set; }
+    }
+
+    public class ClientsideEventArgs : EventArgs
+    {
+        public string Clientside { get; set; }
     }
     public partial class client
     {
@@ -39,15 +46,33 @@ namespace Client
         private MyClient obj;
         private Task send = null;
         private bool exit = false;
-        private string DataAvg = "";
-        private string DataText = "无数据";
-        private string data = "";
+        private string _DataAvg = "";//original data after average data
+        private string data = "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";//post-process average data
+        private string _grade = "00";
+        private string _quali = "00";//qualification
         private bool Ready = false;
         private string order = "";//don't acces this variable: it's just for storing the value in it
         private string serverside = "";
         private string clientside = "";
 
-        
+        // A read-write instance property:
+        public string DataAvg
+        {
+            get => _DataAvg;
+            set => _DataAvg = value;
+        }
+
+        public string grade
+        {
+            get => _grade;
+            set => _grade = value;
+        }
+        public string quali
+        {
+            get => _quali;
+            set => _quali = value;
+        }
+
         //private string variable = "";
         //replyOrder property contains Ready.
         //reply Order when it's ready.
@@ -65,6 +90,19 @@ namespace Client
             }
         }
 
+        //handle when Client side order changed
+        protected virtual void OnClientsideChanged(ClientsideEventArgs e)
+        {
+            EventHandler<ClientsideEventArgs> handler = ClientsideChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+            
+        }
+
+        public event EventHandler<ClientsideEventArgs> ClientsideChanged;
+
         //handle when server side order changed
         protected virtual void OnServersideChanged(ServersideEventArgs e)
         {
@@ -73,6 +111,7 @@ namespace Client
             {
                 handler(this, e);
             }
+
         }
 
         public event EventHandler<ServersideEventArgs> ServersideChanged;
@@ -140,8 +179,9 @@ namespace Client
         }
 
         //convert large integer string to (split)4-Bytes HEX string
-        public static string IntStringToHEXString(String s)
+        public static string IntStringToHEXString(String s = null)
         {
+            
             var result = new List<byte>();
             result.Add(0);
             foreach (char c in s)
@@ -222,7 +262,7 @@ namespace Client
             {
                 { "01", "第1步" },{ "02", "第2步" },{ "03", "第3步" },{ "04", "第4步" },
                 { "05", "第5步" },{ "06", "第6步" },{ "07", "第7步" },{ "08", "第8步" },{ "09", "第9步" },
-                { "19", "9个指令(bytes)" },{ "24", "36个指令(bytes)" },
+                { "19", "9个指令(bytes)" },{ "26", "38个指令(bytes)" },
                 { "1a", "10个指令(bytes)" },{ "1b", "11个指令(bytes)" },
                 { "1A", "10个指令(bytes)" },{ "1B", "11个指令(bytes)" },
                 { "51", "共检测1次" },{ "52", "共检测2次" },
@@ -239,7 +279,11 @@ namespace Client
                 { "7A", "服务器端询问客户端是否结束第1次分析" },{ "7B", "服务器端询问客户端是否结束第2次分析" },
                 { "7C", "服务器端询问客户端是否结束第3次分析" },{ "74", "服务器端准备接收数据" },
                 { "75", "机械手进行换点操作" },{ "76", "移走样品，刷电极" },
-                { "81", "20控样" },{ "82", "25控样" },
+                { "81", "20号控样" },{ "82", "25号控样" },
+                { "8A", "品类为A级" },{ "8B", "品类为B级" },{ "8C", "品类为C级" },
+                { "8a", "品类为A级" },{ "8b", "品类为B级" },{ "8c", "品类为C级" },
+                { "91", "本次激发/分析合格" },{ "92", "本次激发/分析不合格，需要重新激发" },
+                { "00", "无数据" },
                 { "015161", "65" },{  "025162", "66" },{  "035161", "60" },{  "045163", "67" },
                 { "055161", "65"},
                 { "015261", "65" },{  "025262", "66" },{  "035261", "68" },{  "045264", "66" },
@@ -267,7 +311,7 @@ namespace Client
             string value = "";
             if (step != "01" && step != "02" && step != "03" && cond == "63")
             {
-                value = "24";
+                value = "26";
             }
             else
             {
@@ -330,7 +374,7 @@ namespace Client
                         Console.WriteLine("[** 服务器 --> 客户端(你) **]：" + ByteArrayToHexString(obj.buffer, bytes));
                         order = ByteArrayToHexString(obj.buffer, bytes);
                         Console.WriteLine("[** 服务器 --> 客户端(你) **] GetOrder(order)：" + GetOrder(order));
-
+                        
                         //GetOrder(ByteArrayToHexString(obj.buffer, bytes)
                         //Reply(ByteArrayToHexString(obj.buffer, bytes));
                         //Console.WriteLine("Read logWrite obj.buffer ： " + ByteArrayToHexString(obj.buffer, bytes));
@@ -376,7 +420,6 @@ namespace Client
                         Console.WriteLine("Connection BeginRead obj.buffer ：" + ByteArrayToHexString(obj.buffer, obj.buffer.Length));
                         obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), null);
                         obj.handle.WaitOne();//for thread safe
-
                     }
                     catch (Exception ex)
                     {
@@ -454,6 +497,7 @@ namespace Client
                 try
                 {
                     obj.stream.BeginWrite(msg, 0, msg.Length, new AsyncCallback(Write), null);
+                    
                     //Console.WriteLine("Send BeginWrite msg ： " + ByteArrayToHexString(msg, msg.Length));
                 }
                 catch (Exception ex)
@@ -571,58 +615,35 @@ namespace Client
                     String testNum = msgSplit[8];
                     String test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum);
                     string clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum;
-                    String x = "";
                     //String NewData = "";
 
-
-                    if (step == "05")
-                    {
-                        x = "第二次";
-                    }
-                    if (step == "07")
-                    {
-                        x = "第三次";
-                    }
-
-
-                    if (cond == "68" || cond == "69" || cond == "60")
-                    {
-
-                        if (DataText == "无数据")
-                        {
-                            DataText = "已得到第一次检测元素分析值。";
-                            data = "已准备";
-
-                        }
-                        else
-                        {
-                            DataText = "已得到" + x + "检测元素分析值。";
-                            data = "已准备";
-
-                        }
-
-                    }
 
                     //else 
 
                     if (cond == "67")
                     {
-                        Console.WriteLine("Replay 67 DataText ： " + DataText);
-                        DataText = DataAvg;
-                        data = PreHex(DataText.Replace(".", ""));
-                        test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data);
+                        Console.WriteLine("Replay 67 DataAvg ： " + DataAvg);
+                        if (DataAvg != null) 
+                        {
+                            data = PreHex(DataAvg.Replace(".", ""));
+                        }
+                        
+                        test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + grade + " " + quali + " " + data);
 
-                        clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + data;
-                        DataAvg = "";
+                        clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + grade + " " + quali + " " + data;
                     }
-
+                    
                     TaskSend(StringToByteArray(clientmsg));
+                    
                     Console.WriteLine("[** 客户端(你) --> 服务器 **]：" + clientmsg);
                     serverside = "";
                     ServersideEventArgs args = new ServersideEventArgs();
                     args.Serverside = serverside;
                     OnServersideChanged(args);
-                    clientside = GetMeaning(msgSplit[0]) + " " + GetMeaning(length) + " " + HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + " " + GetMeaning(msgSplit[6]) + " " + GetMeaning(cond) + " " + GetMeaning(testNum) + " " + DataText + " " + test;
+                    clientside = GetMeaning(msgSplit[0]) + " " + GetMeaning(length) + " " + test + " " + HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]) + " " + GetMeaning(msgSplit[6]) + " " + GetMeaning(cond) + " " + GetMeaning(testNum) + " " + GetMeaning(grade) + " " + GetMeaning(quali) + " " + DataAvg;
+                    ClientsideEventArgs args1 = new ClientsideEventArgs();
+                    args1.Clientside = clientside;
+                    OnClientsideChanged(args1);
                     return clientside;
                     /*
                     Clabel1.Text = GetMeaning(msgSplit[0]) + Environment.NewLine + "（HEX:" + msgSplit[0] + ")";
