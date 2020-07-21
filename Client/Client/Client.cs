@@ -12,10 +12,10 @@ using System.Text.RegularExpressions;
 
 namespace Client
 {
-    public partial class Client : Form
+    public partial class client : Form
     {
         private bool connected = false;
-        private Thread client = null;
+        private Thread Tclient = null;
         private struct MyClient
         {
             public TcpClient client;
@@ -29,7 +29,7 @@ namespace Client
         public static string DataStore = "";
         public static string DataText = "无数据";
         public static string data = "";
-        public Client()
+        public client()
         {
             InitializeComponent();
         }
@@ -401,7 +401,7 @@ namespace Client
             {
                 obj.client.Close();
             }
-            else if (client == null || !client.IsAlive)
+            else if (Tclient == null || !Tclient.IsAlive)
             {
                 bool localaddrResult = IPAddress.TryParse(localaddrMaskedTextBox.Text, out IPAddress localaddr);
                 if (!localaddrResult)
@@ -420,11 +420,11 @@ namespace Client
                 }
                 if (localaddrResult && portResult)
                 {
-                    client = new Thread(() => Connection(localaddr, port))
+                    Tclient = new Thread(() => Connection(localaddr, port))
                     {
                         IsBackground = true
                     };
-                    client.Start();
+                    Tclient.Start();
                 }
             }
         }
