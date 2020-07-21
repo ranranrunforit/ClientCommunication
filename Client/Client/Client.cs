@@ -111,7 +111,7 @@ namespace Client
     }
     public partial class client
     {
-        private bool connected = false;
+        public bool connected = false;
         private Thread Tclient = null;
         private struct MyClient
         {
@@ -135,7 +135,12 @@ namespace Client
         private readonly Stopwatch stopwatch = new Stopwatch();
         private TimeSpan ts;
         private static System.Timers.Timer aTimer;
-
+        public bool spark = false;
+        public bool newStart = false;
+        public bool RequireData = false;
+        public string state = "";
+        public string ctrlSamp = "";
+        public string SampleNum = "";
 
         // A read-write instance property:
         public string DataAvg
@@ -699,9 +704,18 @@ namespace Client
 
                     for (int i = 0; i < labels.Length; i += 1)
                     {
+                        if (i == 0)
+                        {
+                            if (msgSplit[i] == "01" )
+                            {
+                                newStart = true;
+                            }
+
+                        }
                         if (i == 3)
                         {
                             labels[3] = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]);
+                            SampleNum = HexToDecimal(msgSplit[3] + msgSplit[4] + msgSplit[5]);
 
                         }
                         else if (i == 4)
@@ -720,17 +734,29 @@ namespace Client
                         else if (i == 5)
                         {
                             labels[i] = GetMeaning(msgSplit[i + 2]) + " " + GetMeaning(msgSplit[i + 3]);
-
+                            state = GetMeaning(msgSplit[i + 2]);
+                            if (msgSplit[i + 2] == "62" || msgSplit[i + 2] == "64") 
+                            {
+                                spark = true;
+                            }
+                            if (msgSplit[i + 2] == "63" )
+                            {
+                                RequireData = true;
+                            }
                         }
                         else if (i > 5)
                         {
                             labels[i] = GetMeaning(msgSplit[i + 3]);
+                            if (labels[i] == "81" || labels[i] == "82")
+                            {
+                                ctrlSamp = labels[i];
+                            }
 
                         }
                         else
                         {
                             labels[i] = GetMeaning(msgSplit[i]);
-
+                            
                         }
 
                     } //end of for loop
@@ -778,16 +804,23 @@ namespace Client
                     if (cond == "67")
                     {
                         Console.WriteLine("Replay 67 DataAvg ： " + DataAvg);
-                        if (DataAvg != null) 
+                        if (DataAvg != null)
                         {
                             data = PreHex(DataAvg.Replace(".", ""));
                         }
-                        
+
                         test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + grade + " " + quali + " " + data);
 
                         clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + grade + " " + quali + " " + data;
                     }
-                    
+                    if (cond == "66" || cond == "62" || cond == "64")
+                    {
+
+                        test = CalculateChecksum(step + " " + length + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + quali);
+
+                        clientmsg = step + " " + length + " " + test + " " + sampNum + " " + totalNum + " " + cond + " " + testNum + " " + quali;
+                    }
+
                     TaskSend(StringToByteArray(clientmsg));
                     
                     Console.WriteLine("[** 客户端(你) --> 服务器 **]：" + clientmsg);
