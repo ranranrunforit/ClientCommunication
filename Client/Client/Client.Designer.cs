@@ -28,23 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.connectButton = new System.Windows.Forms.Button();
-            this.portLabel = new System.Windows.Forms.Label();
-            this.localaddrLabel = new System.Windows.Forms.Label();
-            this.portTextBox = new System.Windows.Forms.TextBox();
-            this.localaddrMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
-            this.logLabel = new System.Windows.Forms.Label();
-            this.logTextBox = new System.Windows.Forms.TextBox();
             this.ClientSideInfos = new System.Windows.Forms.GroupBox();
-            this.ChecksumLabel = new System.Windows.Forms.Label();
-            this.DataText = new System.Windows.Forms.TextBox();
-            this.AddInfoLabel = new System.Windows.Forms.Label();
-            this.AddComText = new System.Windows.Forms.MaskedTextBox();
-            this.TestNumText = new System.Windows.Forms.MaskedTextBox();
-            this.TotalNumText = new System.Windows.Forms.MaskedTextBox();
-            this.SampleNumText = new System.Windows.Forms.MaskedTextBox();
-            this.LengthText = new System.Windows.Forms.MaskedTextBox();
-            this.StepText = new System.Windows.Forms.MaskedTextBox();
+            this.Clabel6 = new System.Windows.Forms.Label();
+            this.Clabel5 = new System.Windows.Forms.Label();
+            this.Clabel4 = new System.Windows.Forms.Label();
+            this.Clabel3 = new System.Windows.Forms.Label();
+            this.Clabel2 = new System.Windows.Forms.Label();
+            this.Clabel1 = new System.Windows.Forms.Label();
+            this.Clabel7 = new System.Windows.Forms.Label();
             this.DataLabel = new System.Windows.Forms.Label();
             this.TestNumLabel = new System.Windows.Forms.Label();
             this.TotalTestLabel = new System.Windows.Forms.Label();
@@ -52,11 +43,18 @@
             this.TestLabel = new System.Windows.Forms.Label();
             this.LengthLabel = new System.Windows.Forms.Label();
             this.StepLabel = new System.Windows.Forms.Label();
-            this.btnSubmit = new System.Windows.Forms.Button();
+            this.localaddrMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
+            this.portTextBox = new System.Windows.Forms.TextBox();
+            this.localaddrLabel = new System.Windows.Forms.Label();
+            this.portLabel = new System.Windows.Forms.Label();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.logTextBox = new System.Windows.Forms.TextBox();
+            this.logLabel = new System.Windows.Forms.Label();
+            this.Slabel2 = new System.Windows.Forms.Label();
+            this.Slabel16 = new System.Windows.Forms.Label();
             this.SBox1 = new System.Windows.Forms.GroupBox();
             this.Slabel18 = new System.Windows.Forms.Label();
             this.Slabel17 = new System.Windows.Forms.Label();
-            this.Slabel16 = new System.Windows.Forms.Label();
             this.Slabel15 = new System.Windows.Forms.Label();
             this.Slabel14 = new System.Windows.Forms.Label();
             this.Slabel13 = new System.Windows.Forms.Label();
@@ -68,103 +66,20 @@
             this.Slabel5 = new System.Windows.Forms.Label();
             this.Slabel4 = new System.Windows.Forms.Label();
             this.Slabel3 = new System.Windows.Forms.Label();
-            this.Slabel2 = new System.Windows.Forms.Label();
             this.Slabel1 = new System.Windows.Forms.Label();
             this.ClientSideInfos.SuspendLayout();
             this.SBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // connectButton
-            // 
-            this.connectButton.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.connectButton.Location = new System.Drawing.Point(13, 13);
-            this.connectButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 10);
-            this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(116, 28);
-            this.connectButton.TabIndex = 28;
-            this.connectButton.TabStop = false;
-            this.connectButton.Text = "连接";
-            this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
-            // 
-            // portLabel
-            // 
-            this.portLabel.AutoSize = true;
-            this.portLabel.Location = new System.Drawing.Point(692, 21);
-            this.portLabel.Margin = new System.Windows.Forms.Padding(8, 0, 1, 0);
-            this.portLabel.Name = "portLabel";
-            this.portLabel.Size = new System.Drawing.Size(59, 20);
-            this.portLabel.TabIndex = 27;
-            this.portLabel.Text = "端口:";
-            // 
-            // localaddrLabel
-            // 
-            this.localaddrLabel.AutoSize = true;
-            this.localaddrLabel.Location = new System.Drawing.Point(386, 21);
-            this.localaddrLabel.Margin = new System.Windows.Forms.Padding(8, 0, 1, 0);
-            this.localaddrLabel.Name = "localaddrLabel";
-            this.localaddrLabel.Size = new System.Drawing.Size(89, 20);
-            this.localaddrLabel.TabIndex = 26;
-            this.localaddrLabel.Text = "IP 地址:";
-            // 
-            // portTextBox
-            // 
-            this.portTextBox.Location = new System.Drawing.Point(757, 18);
-            this.portTextBox.Margin = new System.Windows.Forms.Padding(4);
-            this.portTextBox.Name = "portTextBox";
-            this.portTextBox.Size = new System.Drawing.Size(89, 30);
-            this.portTextBox.TabIndex = 25;
-            this.portTextBox.TabStop = false;
-            this.portTextBox.Text = "9000";
-            this.portTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // localaddrMaskedTextBox
-            // 
-            this.localaddrMaskedTextBox.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite;
-            this.localaddrMaskedTextBox.Location = new System.Drawing.Point(480, 18);
-            this.localaddrMaskedTextBox.Margin = new System.Windows.Forms.Padding(4);
-            this.localaddrMaskedTextBox.Mask = "990\\.990\\.990\\.990";
-            this.localaddrMaskedTextBox.Name = "localaddrMaskedTextBox";
-            this.localaddrMaskedTextBox.Size = new System.Drawing.Size(171, 30);
-            this.localaddrMaskedTextBox.TabIndex = 24;
-            this.localaddrMaskedTextBox.TabStop = false;
-            this.localaddrMaskedTextBox.Text = "192168001102";
-            this.localaddrMaskedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // logLabel
-            // 
-            this.logLabel.AutoSize = true;
-            this.logLabel.Location = new System.Drawing.Point(13, 602);
-            this.logLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.logLabel.Name = "logLabel";
-            this.logLabel.Size = new System.Drawing.Size(89, 20);
-            this.logLabel.TabIndex = 31;
-            this.logLabel.Text = "对话记录";
-            // 
-            // logTextBox
-            // 
-            this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.logTextBox.Location = new System.Drawing.Point(13, 626);
-            this.logTextBox.Margin = new System.Windows.Forms.Padding(4);
-            this.logTextBox.Multiline = true;
-            this.logTextBox.Name = "logTextBox";
-            this.logTextBox.ReadOnly = true;
-            this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logTextBox.Size = new System.Drawing.Size(939, 114);
-            this.logTextBox.TabIndex = 30;
-            this.logTextBox.TabStop = false;
-            // 
             // ClientSideInfos
             // 
-            this.ClientSideInfos.Controls.Add(this.ChecksumLabel);
-            this.ClientSideInfos.Controls.Add(this.DataText);
-            this.ClientSideInfos.Controls.Add(this.AddInfoLabel);
-            this.ClientSideInfos.Controls.Add(this.AddComText);
-            this.ClientSideInfos.Controls.Add(this.TestNumText);
-            this.ClientSideInfos.Controls.Add(this.TotalNumText);
-            this.ClientSideInfos.Controls.Add(this.SampleNumText);
-            this.ClientSideInfos.Controls.Add(this.LengthText);
-            this.ClientSideInfos.Controls.Add(this.StepText);
+            this.ClientSideInfos.Controls.Add(this.Clabel6);
+            this.ClientSideInfos.Controls.Add(this.Clabel5);
+            this.ClientSideInfos.Controls.Add(this.Clabel4);
+            this.ClientSideInfos.Controls.Add(this.Clabel3);
+            this.ClientSideInfos.Controls.Add(this.Clabel2);
+            this.ClientSideInfos.Controls.Add(this.Clabel1);
+            this.ClientSideInfos.Controls.Add(this.Clabel7);
             this.ClientSideInfos.Controls.Add(this.DataLabel);
             this.ClientSideInfos.Controls.Add(this.TestNumLabel);
             this.ClientSideInfos.Controls.Add(this.TotalTestLabel);
@@ -178,95 +93,77 @@
             this.ClientSideInfos.Size = new System.Drawing.Size(939, 256);
             this.ClientSideInfos.TabIndex = 35;
             this.ClientSideInfos.TabStop = false;
-            this.ClientSideInfos.Text = "客户端信息";
+            this.ClientSideInfos.Text = "发送客户端信息";
             // 
-            // ChecksumLabel
+            // Clabel6
             // 
-            this.ChecksumLabel.AutoSize = true;
-            this.ChecksumLabel.Location = new System.Drawing.Point(804, 172);
-            this.ChecksumLabel.Name = "ChecksumLabel";
-            this.ChecksumLabel.Size = new System.Drawing.Size(29, 20);
-            this.ChecksumLabel.TabIndex = 47;
-            this.ChecksumLabel.Text = "FF";
-            this.ChecksumLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Clabel6.AutoSize = true;
+            this.Clabel6.Location = new System.Drawing.Point(2, 164);
+            this.Clabel6.Name = "Clabel6";
+            this.Clabel6.Size = new System.Drawing.Size(39, 20);
+            this.Clabel6.TabIndex = 53;
+            this.Clabel6.Text = "   ";
+            this.Clabel6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // DataText
+            // Clabel5
             // 
-            this.DataText.Location = new System.Drawing.Point(24, 162);
-            this.DataText.Multiline = true;
-            this.DataText.Name = "DataText";
-            this.DataText.Size = new System.Drawing.Size(518, 78);
-            this.DataText.TabIndex = 46;
-            this.DataText.Text = "32.4897 51.2486 37.8932 48.9751 24.8637 89.3248 97.5124 86.3789 32.4897";
+            this.Clabel5.AutoSize = true;
+            this.Clabel5.Location = new System.Drawing.Point(599, 78);
+            this.Clabel5.Name = "Clabel5";
+            this.Clabel5.Size = new System.Drawing.Size(39, 20);
+            this.Clabel5.TabIndex = 52;
+            this.Clabel5.Text = "   ";
+            this.Clabel5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // AddInfoLabel
+            // Clabel4
             // 
-            this.AddInfoLabel.AutoSize = true;
-            this.AddInfoLabel.Location = new System.Drawing.Point(533, 134);
-            this.AddInfoLabel.Name = "AddInfoLabel";
-            this.AddInfoLabel.Size = new System.Drawing.Size(179, 20);
-            this.AddInfoLabel.TabIndex = 44;
-            this.AddInfoLabel.Text = "分析流程/信息交流";
+            this.Clabel4.AutoSize = true;
+            this.Clabel4.Location = new System.Drawing.Point(423, 78);
+            this.Clabel4.Name = "Clabel4";
+            this.Clabel4.Size = new System.Drawing.Size(39, 20);
+            this.Clabel4.TabIndex = 51;
+            this.Clabel4.Text = "   ";
+            this.Clabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // AddComText
+            // Clabel3
             // 
-            this.AddComText.Location = new System.Drawing.Point(594, 162);
-            this.AddComText.Mask = "&&";
-            this.AddComText.Name = "AddComText";
-            this.AddComText.Size = new System.Drawing.Size(44, 30);
-            this.AddComText.TabIndex = 43;
-            this.AddComText.Text = "71";
-            this.AddComText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Clabel3.AutoSize = true;
+            this.Clabel3.Location = new System.Drawing.Point(251, 78);
+            this.Clabel3.Name = "Clabel3";
+            this.Clabel3.Size = new System.Drawing.Size(39, 20);
+            this.Clabel3.TabIndex = 50;
+            this.Clabel3.Text = "   ";
+            this.Clabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // TestNumText
+            // Clabel2
             // 
-            this.TestNumText.Location = new System.Drawing.Point(683, 77);
-            this.TestNumText.Mask = "&& &&";
-            this.TestNumText.Name = "TestNumText";
-            this.TestNumText.Size = new System.Drawing.Size(96, 30);
-            this.TestNumText.TabIndex = 42;
-            this.TestNumText.Text = "6100";
-            this.TestNumText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Clabel2.AutoSize = true;
+            this.Clabel2.Location = new System.Drawing.Point(97, 78);
+            this.Clabel2.Name = "Clabel2";
+            this.Clabel2.Size = new System.Drawing.Size(39, 20);
+            this.Clabel2.TabIndex = 49;
+            this.Clabel2.Text = "   ";
+            this.Clabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // TotalNumText
+            // Clabel1
             // 
-            this.TotalNumText.Location = new System.Drawing.Point(537, 77);
-            this.TotalNumText.Mask = "&&";
-            this.TotalNumText.Name = "TotalNumText";
-            this.TotalNumText.Size = new System.Drawing.Size(44, 30);
-            this.TotalNumText.TabIndex = 41;
-            this.TotalNumText.Text = "51";
-            this.TotalNumText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Clabel1.AutoSize = true;
+            this.Clabel1.Location = new System.Drawing.Point(2, 78);
+            this.Clabel1.Name = "Clabel1";
+            this.Clabel1.Size = new System.Drawing.Size(39, 20);
+            this.Clabel1.TabIndex = 48;
+            this.Clabel1.Text = "   ";
+            this.Clabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // SampleNumText
+            // Clabel7
             // 
-            this.SampleNumText.Location = new System.Drawing.Point(249, 77);
-            this.SampleNumText.Mask = "9999999";
-            this.SampleNumText.Name = "SampleNumText";
-            this.SampleNumText.Size = new System.Drawing.Size(162, 30);
-            this.SampleNumText.TabIndex = 40;
-            this.SampleNumText.Text = "4569837";
-            this.SampleNumText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // LengthText
-            // 
-            this.LengthText.Location = new System.Drawing.Point(129, 77);
-            this.LengthText.Mask = "&&";
-            this.LengthText.Name = "LengthText";
-            this.LengthText.Size = new System.Drawing.Size(44, 30);
-            this.LengthText.TabIndex = 38;
-            this.LengthText.Text = "19";
-            this.LengthText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // StepText
-            // 
-            this.StepText.Location = new System.Drawing.Point(24, 77);
-            this.StepText.Mask = "&&";
-            this.StepText.Name = "StepText";
-            this.StepText.Size = new System.Drawing.Size(44, 30);
-            this.StepText.TabIndex = 36;
-            this.StepText.Text = "01";
-            this.StepText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Clabel7.AutoSize = true;
+            this.Clabel7.Location = new System.Drawing.Point(900, 198);
+            this.Clabel7.Name = "Clabel7";
+            this.Clabel7.Size = new System.Drawing.Size(39, 20);
+            this.Clabel7.TabIndex = 47;
+            this.Clabel7.Text = "   ";
+            this.Clabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // DataLabel
             // 
@@ -289,7 +186,7 @@
             // TotalTestLabel
             // 
             this.TotalTestLabel.AutoSize = true;
-            this.TotalTestLabel.Location = new System.Drawing.Point(501, 41);
+            this.TotalTestLabel.Location = new System.Drawing.Point(445, 41);
             this.TotalTestLabel.Name = "TotalTestLabel";
             this.TotalTestLabel.Size = new System.Drawing.Size(109, 20);
             this.TotalTestLabel.TabIndex = 4;
@@ -298,7 +195,7 @@
             // SimpleNumLabel
             // 
             this.SimpleNumLabel.AutoSize = true;
-            this.SimpleNumLabel.Location = new System.Drawing.Point(291, 41);
+            this.SimpleNumLabel.Location = new System.Drawing.Point(279, 41);
             this.SimpleNumLabel.Name = "SimpleNumLabel";
             this.SimpleNumLabel.Size = new System.Drawing.Size(69, 20);
             this.SimpleNumLabel.TabIndex = 3;
@@ -306,11 +203,11 @@
             // 
             // TestLabel
             // 
-            this.TestLabel.Location = new System.Drawing.Point(718, 122);
+            this.TestLabel.Location = new System.Drawing.Point(889, 164);
             this.TestLabel.Name = "TestLabel";
-            this.TestLabel.Size = new System.Drawing.Size(215, 44);
+            this.TestLabel.Size = new System.Drawing.Size(51, 20);
             this.TestLabel.TabIndex = 2;
-            this.TestLabel.Text = "校验\r\n(无需输入，自动更新)";
+            this.TestLabel.Text = "校验";
             this.TestLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LengthLabel
@@ -331,18 +228,105 @@
             this.StepLabel.TabIndex = 0;
             this.StepLabel.Text = "操作步骤";
             // 
-            // btnSubmit
+            // localaddrMaskedTextBox
             // 
-            this.btnSubmit.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnSubmit.Location = new System.Drawing.Point(774, 316);
-            this.btnSubmit.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(116, 28);
-            this.btnSubmit.TabIndex = 43;
-            this.btnSubmit.TabStop = false;
-            this.btnSubmit.Text = "发送";
-            this.btnSubmit.UseVisualStyleBackColor = true;
-            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
+            this.localaddrMaskedTextBox.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite;
+            this.localaddrMaskedTextBox.Location = new System.Drawing.Point(480, 18);
+            this.localaddrMaskedTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.localaddrMaskedTextBox.Mask = "990\\.990\\.990\\.990";
+            this.localaddrMaskedTextBox.Name = "localaddrMaskedTextBox";
+            this.localaddrMaskedTextBox.Size = new System.Drawing.Size(171, 30);
+            this.localaddrMaskedTextBox.TabIndex = 24;
+            this.localaddrMaskedTextBox.TabStop = false;
+            this.localaddrMaskedTextBox.Text = "192168001108";
+            this.localaddrMaskedTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // portTextBox
+            // 
+            this.portTextBox.Location = new System.Drawing.Point(757, 18);
+            this.portTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.portTextBox.Name = "portTextBox";
+            this.portTextBox.Size = new System.Drawing.Size(89, 30);
+            this.portTextBox.TabIndex = 25;
+            this.portTextBox.TabStop = false;
+            this.portTextBox.Text = "9000";
+            this.portTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // localaddrLabel
+            // 
+            this.localaddrLabel.AutoSize = true;
+            this.localaddrLabel.Location = new System.Drawing.Point(386, 21);
+            this.localaddrLabel.Margin = new System.Windows.Forms.Padding(8, 0, 1, 0);
+            this.localaddrLabel.Name = "localaddrLabel";
+            this.localaddrLabel.Size = new System.Drawing.Size(89, 20);
+            this.localaddrLabel.TabIndex = 26;
+            this.localaddrLabel.Text = "IP 地址:";
+            // 
+            // portLabel
+            // 
+            this.portLabel.AutoSize = true;
+            this.portLabel.Location = new System.Drawing.Point(692, 21);
+            this.portLabel.Margin = new System.Windows.Forms.Padding(8, 0, 1, 0);
+            this.portLabel.Name = "portLabel";
+            this.portLabel.Size = new System.Drawing.Size(59, 20);
+            this.portLabel.TabIndex = 27;
+            this.portLabel.Text = "端口:";
+            // 
+            // connectButton
+            // 
+            this.connectButton.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.connectButton.Location = new System.Drawing.Point(13, 13);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 10);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(116, 28);
+            this.connectButton.TabIndex = 28;
+            this.connectButton.TabStop = false;
+            this.connectButton.Text = "连接";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
+            // 
+            // logTextBox
+            // 
+            this.logTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.logTextBox.Location = new System.Drawing.Point(13, 626);
+            this.logTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.logTextBox.Multiline = true;
+            this.logTextBox.Name = "logTextBox";
+            this.logTextBox.ReadOnly = true;
+            this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.logTextBox.Size = new System.Drawing.Size(939, 114);
+            this.logTextBox.TabIndex = 30;
+            this.logTextBox.TabStop = false;
+            // 
+            // logLabel
+            // 
+            this.logLabel.AutoSize = true;
+            this.logLabel.Location = new System.Drawing.Point(13, 602);
+            this.logLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.logLabel.Name = "logLabel";
+            this.logLabel.Size = new System.Drawing.Size(89, 20);
+            this.logLabel.TabIndex = 31;
+            this.logLabel.Text = "对话记录";
+            // 
+            // Slabel2
+            // 
+            this.Slabel2.AutoSize = true;
+            this.Slabel2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Slabel2.Location = new System.Drawing.Point(189, 40);
+            this.Slabel2.Name = "Slabel2";
+            this.Slabel2.Size = new System.Drawing.Size(109, 20);
+            this.Slabel2.TabIndex = 1;
+            this.Slabel2.Text = "指令总长度";
+            // 
+            // Slabel16
+            // 
+            this.Slabel16.AutoSize = true;
+            this.Slabel16.Location = new System.Drawing.Point(6, 193);
+            this.Slabel16.Name = "Slabel16";
+            this.Slabel16.Size = new System.Drawing.Size(29, 20);
+            this.Slabel16.TabIndex = 13;
+            this.Slabel16.Text = "  ";
+            this.Slabel16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // SBox1
             // 
@@ -368,7 +352,7 @@
             this.SBox1.Size = new System.Drawing.Size(939, 262);
             this.SBox1.TabIndex = 44;
             this.SBox1.TabStop = false;
-            this.SBox1.Text = "服务器信息";
+            this.SBox1.Text = "接收服务器信息";
             // 
             // Slabel18
             // 
@@ -383,22 +367,12 @@
             // Slabel17
             // 
             this.Slabel17.AutoSize = true;
-            this.Slabel17.Location = new System.Drawing.Point(462, 193);
+            this.Slabel17.Location = new System.Drawing.Point(411, 193);
             this.Slabel17.Name = "Slabel17";
             this.Slabel17.Size = new System.Drawing.Size(29, 20);
             this.Slabel17.TabIndex = 14;
             this.Slabel17.Text = "  ";
             this.Slabel17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // Slabel16
-            // 
-            this.Slabel16.AutoSize = true;
-            this.Slabel16.Location = new System.Drawing.Point(36, 193);
-            this.Slabel16.Name = "Slabel16";
-            this.Slabel16.Size = new System.Drawing.Size(29, 20);
-            this.Slabel16.TabIndex = 13;
-            this.Slabel16.Text = "  ";
-            this.Slabel16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Slabel15
             // 
@@ -413,7 +387,7 @@
             // Slabel14
             // 
             this.Slabel14.AutoSize = true;
-            this.Slabel14.Location = new System.Drawing.Point(539, 85);
+            this.Slabel14.Location = new System.Drawing.Point(524, 85);
             this.Slabel14.Name = "Slabel14";
             this.Slabel14.Size = new System.Drawing.Size(29, 20);
             this.Slabel14.TabIndex = 11;
@@ -510,16 +484,6 @@
             this.Slabel3.TabIndex = 2;
             this.Slabel3.Text = "校验";
             // 
-            // Slabel2
-            // 
-            this.Slabel2.AutoSize = true;
-            this.Slabel2.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.Slabel2.Location = new System.Drawing.Point(189, 40);
-            this.Slabel2.Name = "Slabel2";
-            this.Slabel2.Size = new System.Drawing.Size(109, 20);
-            this.Slabel2.TabIndex = 1;
-            this.Slabel2.Text = "指令总长度";
-            // 
             // Slabel1
             // 
             this.Slabel1.AutoSize = true;
@@ -535,7 +499,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(982, 753);
-            this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.SBox1);
             this.Controls.Add(this.ClientSideInfos);
             this.Controls.Add(this.logLabel);
@@ -565,14 +528,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Button connectButton;
-        private System.Windows.Forms.Label portLabel;
-        private System.Windows.Forms.Label localaddrLabel;
-        private System.Windows.Forms.TextBox portTextBox;
-        private System.Windows.Forms.MaskedTextBox localaddrMaskedTextBox;
-        private System.Windows.Forms.Label logLabel;
-        private System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.GroupBox ClientSideInfos;
+        private System.Windows.Forms.Label Clabel6;
+        private System.Windows.Forms.Label Clabel5;
+        private System.Windows.Forms.Label Clabel4;
+        private System.Windows.Forms.Label Clabel3;
+        private System.Windows.Forms.Label Clabel2;
+        private System.Windows.Forms.Label Clabel1;
+        private System.Windows.Forms.Label Clabel7;
         private System.Windows.Forms.Label DataLabel;
         private System.Windows.Forms.Label TestNumLabel;
         private System.Windows.Forms.Label TotalTestLabel;
@@ -580,33 +543,30 @@
         private System.Windows.Forms.Label TestLabel;
         private System.Windows.Forms.Label LengthLabel;
         private System.Windows.Forms.Label StepLabel;
-        private System.Windows.Forms.MaskedTextBox TestNumText;
-        private System.Windows.Forms.MaskedTextBox TotalNumText;
-        private System.Windows.Forms.MaskedTextBox SampleNumText;
-        private System.Windows.Forms.MaskedTextBox LengthText;
-        private System.Windows.Forms.MaskedTextBox StepText;
-        private System.Windows.Forms.Button btnSubmit;
-        private System.Windows.Forms.Label AddInfoLabel;
-        private System.Windows.Forms.MaskedTextBox AddComText;
+        private System.Windows.Forms.MaskedTextBox localaddrMaskedTextBox;
+        private System.Windows.Forms.TextBox portTextBox;
+        private System.Windows.Forms.Label localaddrLabel;
+        private System.Windows.Forms.Label portLabel;
+        private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.TextBox logTextBox;
+        private System.Windows.Forms.Label logLabel;
+        private System.Windows.Forms.Label Slabel2;
+        private System.Windows.Forms.Label Slabel16;
         private System.Windows.Forms.GroupBox SBox1;
+        private System.Windows.Forms.Label Slabel18;
+        private System.Windows.Forms.Label Slabel17;
+        private System.Windows.Forms.Label Slabel15;
+        private System.Windows.Forms.Label Slabel14;
+        private System.Windows.Forms.Label Slabel13;
+        private System.Windows.Forms.Label Slabel12;
+        private System.Windows.Forms.Label Slabel11;
         private System.Windows.Forms.Label Slabel8;
         private System.Windows.Forms.Label Slabel7;
         private System.Windows.Forms.Label Slabel6;
         private System.Windows.Forms.Label Slabel5;
         private System.Windows.Forms.Label Slabel4;
         private System.Windows.Forms.Label Slabel3;
-        private System.Windows.Forms.Label Slabel2;
         private System.Windows.Forms.Label Slabel1;
-        private System.Windows.Forms.Label Slabel18;
-        private System.Windows.Forms.Label Slabel17;
-        private System.Windows.Forms.Label Slabel16;
-        private System.Windows.Forms.Label Slabel15;
-        private System.Windows.Forms.Label Slabel14;
-        private System.Windows.Forms.Label Slabel13;
-        private System.Windows.Forms.Label Slabel12;
-        private System.Windows.Forms.Label Slabel11;
-        private System.Windows.Forms.TextBox DataText;
-        private System.Windows.Forms.Label ChecksumLabel;
     }
 }
 
