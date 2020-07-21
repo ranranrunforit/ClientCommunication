@@ -36,6 +36,7 @@ namespace Client
                 var logFilePath = Path.Combine(@"C:\Users\zhouc\Desktop\", "Log-" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
                 WriteToLog(logMessage, logFilePath);
                 */
+                
                 //Use this for daily log files : "Log" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
                 //yourapp_exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
                 //for example，in my testing app is 
@@ -67,6 +68,9 @@ namespace Client
 
         static void WriteToLog(string logMessage, string logFilePath)
         {
+            // only one thread can own this lock, so other threads
+            // entering this method will wait here until lock is
+            // available.
             lock (_locker)
             {
                 
@@ -74,6 +78,7 @@ namespace Client
                         string.Format("Logged on: {1} at: {2}{0}Message: {3}{0}--------------------{0}",
                         Environment.NewLine, DateTime.Now.ToLongDateString(),
                         DateTime.Now.ToLongTimeString(), logMessage));
+                
                 /*
                 StreamWriter sw;
                 sw = File.AppendText(logFilePath);
@@ -230,6 +235,16 @@ namespace Client
             {
                 handler(this, e);
             }
+            /*
+            if (e.Connect == true)
+            {
+                Logger.Log("[** 客户端(你) 已连接 OnConnected **]");
+            }
+            else
+            {
+                Logger.Log("[** 客户端(你) 已断开 OnConnected **]");
+            }
+            */
         }
 
         public event EventHandler<ConnectedEventArgs> Connected;
@@ -443,6 +458,7 @@ namespace Client
                 catch (Exception ex)
                 {
                     Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                    Logger.Log(string.Format("[** {0} **]", ex.Message));
                 }
             }
             if (bytes > 0)
@@ -475,6 +491,7 @@ namespace Client
                 catch (Exception ex)
                 {
                     Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                    Logger.Log(string.Format("[** {0} **]", ex.Message));
                     obj.handle.Set();
                 }
             }
@@ -503,7 +520,7 @@ namespace Client
                 OnConnected(args);
                 clientside = "[** 客户端(你) 已连接 **]";
                 Console.WriteLine("[** 客户端(你) 已连接 **]");
-                Logger.Log(clientside);
+                Logger.Log("[** 客户端(你) 已连接 **]");
                 while (obj.client.Connected)
                 {
                     try
@@ -517,6 +534,7 @@ namespace Client
                     catch (Exception ex)
                     {
                         Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                        Logger.Log(string.Format("[** {0} **]", ex.Message));
                     }
                 }
 
@@ -524,17 +542,22 @@ namespace Client
                 exit = true;
                 obj.client.Close();
                 
-                ConnectedEventArgs argsc = new ConnectedEventArgs();
-                argsc.Connect = connected;
-                OnConnected(argsc);
-                
+                ConnectedEventArgs argsf = new ConnectedEventArgs();
+                argsf.Connect = connected;
+                OnConnected(argsf);
+
                 clientside = "[** 客户端(你) 已断开 **]";
-                Logger.Log(clientside);
+                Logger.Log("[** 客户端(你) 已断开 **]");
                 Console.WriteLine("[** 客户端(你) 已断开 **]");
+
+                //clientside = "[** 客户端(你) 已断开 Connection **]";
+                //Logger.Log("[** 客户端(你) 已断开 Connection **]");
+                //Console.WriteLine("[** 客户端(你) 已断开 Connection **]");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                Logger.Log(string.Format("[** {0} **]", ex.Message));
             }
         }
 
@@ -544,9 +567,11 @@ namespace Client
         {
             if (connected)
             {
-                connected = false;
                 exit = true;
                 obj.client.Close();
+
+                //Logger.Log("[** 客户端(你) 已断开Connect_Click **]");
+                //Console.WriteLine("[** 客户端(你) 已断开Connect_Click **]");
             }
             else if (Tclient == null || !Tclient.IsAlive)
             {
@@ -592,6 +617,7 @@ namespace Client
                 catch (Exception ex)
                 {
                     Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                    Logger.Log(string.Format("[** {0} **]", ex.Message));
                 }
             }
         }
@@ -610,6 +636,7 @@ namespace Client
                 catch (Exception ex)
                 {
                     Console.WriteLine(string.Format("[** {0} **]", ex.Message));
+                    Logger.Log(string.Format("[** {0} **]", ex.Message));
                 }
             }
         }
@@ -633,9 +660,11 @@ namespace Client
         {
             if (connected)
             {
-                connected = false;
                 exit = true;
                 obj.client.Close();
+
+                //Logger.Log("[** 客户端(你) 已断开 Client_Closing**]");
+                //Console.WriteLine("[** 客户端(你) 已断开 Client_Closing**]");
             }
             
         }
